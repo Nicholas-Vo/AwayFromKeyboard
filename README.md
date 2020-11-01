@@ -22,3 +22,6 @@ messages:
   tabListTag: '%playername% &8AFK'
   noPermission: '&cError: &rYou do not have permission to do that.'
   ```
+# Command menu
+
+![image](https://imgur.com/PHReMV9)
