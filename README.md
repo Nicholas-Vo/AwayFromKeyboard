@@ -24,4 +24,5 @@ messages:
   ```
 # Command menu
 
-![test](AwayFromKeyboard/afkmenu.PNG?raw=true)
+![afkmenu](https://user-images.githubusercontent.com/60233722/97815421-71150b80-1c53-11eb-8e7f-8f0b08c3309b.PNG)
+
