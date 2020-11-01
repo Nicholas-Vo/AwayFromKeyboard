@@ -2,6 +2,10 @@
 
 AwayFromKeyboard allows a server administrator to view a list of players who are currently AFK.
 
+# Command menu
+
+![afkmenu](https://user-images.githubusercontent.com/60233722/97815421-71150b80-1c53-11eb-8e7f-8f0b08c3309b.PNG)
+
 # Configuration
 ```
 # The amount of time a player must be away before being marked as AFK.
@@ -22,7 +26,4 @@ messages:
   tabListTag: '%playername% &8AFK'
   noPermission: '&cError: &rYou do not have permission to do that.'
   ```
-# Command menu
-
-![afkmenu](https://user-images.githubusercontent.com/60233722/97815421-71150b80-1c53-11eb-8e7f-8f0b08c3309b.PNG)
 
