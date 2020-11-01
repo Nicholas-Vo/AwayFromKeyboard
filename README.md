@@ -24,4 +24,4 @@ messages:
   ```
 # Command menu
 
-![test](afkmenu.png)
+![test](AwayFromKeyboard/afkmenu.PNG)
