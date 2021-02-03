@@ -1,4 +1,4 @@
-![AFKICON](https://user-images.githubusercontent.com/60233722/106798889-393bac80-6624-11eb-92c3-cbeec6ffa547.PNG)
+![AFKICON](https://user-images.githubusercontent.com/60233722/106799057-6720f100-6624-11eb-9245-69ee555e9811.PNG)
 
 Minecraft Bukkit plugin to detect when players have gone idle.
 
