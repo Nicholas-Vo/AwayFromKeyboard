@@ -1,6 +1,6 @@
-# AwayFromKeyboard, a Minecraft plugin to detect when players have gone idle
+![afk](https://user-images.githubusercontent.com/60233722/106798484-a569e080-6623-11eb-82c5-92b97a90ade2.PNG)
 
-AwayFromKeyboard allows a server administrator to view a list of players who are currently AFK.
+AwayFromKeyboard, a Minecraft plugin to detect when players have gone idle.
 
 # Command menu
 
