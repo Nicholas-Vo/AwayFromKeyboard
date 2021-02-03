@@ -1,6 +1,6 @@
 ![AFKICON](https://user-images.githubusercontent.com/60233722/106798889-393bac80-6624-11eb-92c3-cbeec6ffa547.PNG)
 
-AwayFromKeyboard, a Minecraft plugin to detect when players have gone idle.
+Minecraft Bukkit plugin to detect when players have gone idle.
 
 # Command menu
 
