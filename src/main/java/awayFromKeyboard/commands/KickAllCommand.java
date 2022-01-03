@@ -1,13 +1,11 @@
 package awayFromKeyboard.commands;
 
+import awayFromKeyboard.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-
-import awayFromKeyboard.AwayFromKeyboard;
-import awayFromKeyboard.SubCommand;
 
 public class KickAllCommand extends SubCommand {
 
@@ -33,19 +31,16 @@ public class KickAllCommand extends SubCommand {
 		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
-			if (!(sender instanceof ConsoleCommandSender)) {
-				afk.logger.info(sender.getName() + " kicked all AFK players.");
-			}
+			Notifier.sendMsgToConsole(sender instanceof ConsoleCommandSender
+					? "You have" : sender.getName() + " has" + " kicked all AFK players.");
 
-			for (Player player : afk.getAfkPlayers()) {
-				player.kickPlayer(afk.stringFromConfig(sender, "messageToKickedPlayers"));
-				afk.removeAFK(player);
-			}
+			afk.getAfkPlayers().forEach(player -> {
+				player.kickPlayer(Messages.messageToKickedPlayers);
+				player.setAfk(false);
+			});
 
-			// TODO: Delay this message
-			if (afk.getConfig().getBoolean("announceWhenKickingPlayers")) {
-				Bukkit.broadcastMessage(afk.stringFromConfig(sender, "announcementToServer"));
-			}
+			// TODO: Delay this message?
+			Notifier.broadcast(Messages.announcementToServer);
 		}
 	}
 
