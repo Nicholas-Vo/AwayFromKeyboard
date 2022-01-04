@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import java.util.concurrent.TimeUnit;
 
 public abstract class IdlePlayer implements Player {
-    long timeWentIdle;
-    boolean isIdle;
+    private long timeWentIdle;
+    private static boolean isIdle;
 
     public String getTimeAFK(Player p) {
         long secondsAFK = (System.currentTimeMillis() - timeWentIdle) / 1000;
@@ -17,6 +17,10 @@ public abstract class IdlePlayer implements Player {
                     TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1)) + "m";
         }
         return result;
+    }
+
+    public boolean isIdle() {
+        return isIdle;
     }
 
     public void setAfk(boolean isIdle) {

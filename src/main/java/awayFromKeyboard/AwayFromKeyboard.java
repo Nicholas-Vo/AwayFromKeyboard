@@ -26,76 +26,77 @@ import awayFromKeyboard.commands.SetTimeCommand;
 import net.md_5.bungee.api.ChatColor;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor {
-	private final String VERSION = "2.0";
-	private static final List<SubCommand> commands = new ArrayList<>();
-	public ConcurrentMap<UUID, Boolean> afkMap = new ConcurrentHashMap<UUID, Boolean>();
-	public ConcurrentMap<UUID, Long> timeWentAFK = new ConcurrentHashMap<UUID, Long>();
-	public ConcurrentMap<UUID, Integer> runnableMap = new ConcurrentHashMap<UUID, Integer>();
-	public ConcurrentMap<UUID, Boolean> inBufferPeriod = new ConcurrentHashMap<UUID, Boolean>();
-	public String pluginTag = ChatColor.RED + "[AFK] " + ChatColor.RESET;
-	public static AwayFromKeyboard thePlugin;
+    private final String VERSION = "2.0";
+    private static final List<SubCommand> commands = new ArrayList<>();
+    public ConcurrentMap<UUID, Boolean> afkMap = new ConcurrentHashMap<UUID, Boolean>();
+    public ConcurrentMap<UUID, Long> timeWentAFK = new ConcurrentHashMap<UUID, Long>();
+    public ConcurrentMap<UUID, Integer> runnableMap = new ConcurrentHashMap<UUID, Integer>();
+    public ConcurrentMap<UUID, Boolean> inBufferPeriod = new ConcurrentHashMap<UUID, Boolean>();
 
-	public void onEnable() {
-		getServer().getPluginManager().registerEvents(this, this);
-		thePlugin = this;
 
-		new Listeners(this); // todo move all listeners into individual classes
-		new ConfigHandler();
+    public static AwayFromKeyboard thePlugin;
 
-		commands.add(new ListCommand(this));
-		commands.add(new SetTimeCommand(this));
-		commands.add(new ReloadCommand(this));
-		commands.add(new KickAllCommand(this));
+    public void onEnable() {
+        getServer().getPluginManager().registerEvents(this, this);
+        thePlugin = this;
 
-		Notifier.sendMsgToConsole("Enabling AwayFromKeyboard " + VERSION + "...");
-	}
+        new Listeners(this); // todo move all listeners into individual classes
+        new ConfigHandler();
 
-	public void onDisable() {
-		Bukkit.getScheduler().cancelTasks(this); // cancel all tasks
-		Notifier.sendMsgToConsole("Disabled AwayFromKeyboard " + VERSION + ".");
-	}
+        commands.add(new ListCommand(this));
+        commands.add(new SetTimeCommand(this));
+        commands.add(new ReloadCommand(this));
+        commands.add(new KickAllCommand(this));
 
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (args.length < 1) {
-			if (!(sender instanceof Player player)) {
-				Messages.displayCommandMenu(sender);
-				return true;
-			}
+        Notifier.sendMsgToConsole("Enabling AwayFromKeyboard " + VERSION + "...");
+    }
 
-			if (!player.hasPermission("afk.goafk")) {
-				sender.sendMessage(Messages.noPermission);
-				return true;
-			}
+    public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this); // cancel all tasks
+        Notifier.sendMsgToConsole("Disabled AwayFromKeyboard " + VERSION + ".");
+    }
 
-			if (!player.hasPermission("afk.seeNotifications")) {
-				sender.sendMessage(Messages.markedYourselfAfk);
-			}
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+        if (args.length < 1) {
+            if (!(sender instanceof Player player)) {
+                Messages.displayCommandMenu(sender);
+                return true;
+            }
 
-			setAFK(player);
-			applyBuffer(player); // prevent removal of afk status for 3 seconds
-			return true;
-		}
+            if (!player.hasPermission("afk.goafk")) {
+                sender.sendMessage(Messages.noPermission);
+                return true;
+            }
 
-		String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
+            if (!player.hasPermission("afk.seeNotifications")) {
+                sender.sendMessage(Messages.markedYourselfAfk);
+            }
 
-		commands.forEach(subCmd -> {
-			if (subCmd.getName().equals(args[0])) {
-				if (sender.hasPermission(subCmd.permission())) {
-					subCmd.execute(sender, restOfArgs);
-				} else {
-					sender.sendMessage(Messages.noPermission);
-				}
-			}
-		});
+            setAFK(player);
+            applyBuffer(player); // prevent removal of afk status for 3 seconds
+            return true;
+        }
 
-		Messages.displayCommandMenu(sender);
-		return true;
-	}
+        String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
 
-	public void setAFK(Player player) {
-		afkMap.put(player.getUniqueId(), true);
-		Notifier.notify(player, "isNowAfk");
-	}
+        commands.forEach(subCmd -> {
+            if (subCmd.getName().equals(args[0])) {
+                if (sender.hasPermission(subCmd.permission())) {
+                    subCmd.execute(sender, restOfArgs);
+                } else {
+                    sender.sendMessage(Messages.noPermission);
+                }
+            }
+        });
+
+        Messages.displayCommandMenu(sender);
+        return true;
+    }
+
+    public void setAFK(Player player) {
+        afkMap.put(player.getUniqueId(), true);
+        Notifier.notify(player, "isNowAfk");
+    }
 
 //	public void removeAFK(Player player) {
 //		afkMap.put(player.getUniqueId(), false);
@@ -104,41 +105,28 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
 //		if (ConfigHandler.displayTabListTag) player.setPlayerListName(player.getName());
 //	}
 
-	public void error(CommandSender sender, String error) {
-		sender.sendMessage(ChatColor.RED + "Error: " + ChatColor.WHITE + error);
-	}
+    public void error(CommandSender sender, String error) {
+        sender.sendMessage(ChatColor.RED + "Error: " + ChatColor.WHITE + error);
+    }
 
-	public void applyBuffer(Player player) {
-		inBufferPeriod.put(player.getUniqueId(), true);
-		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+    public void applyBuffer(Player player) {
+        inBufferPeriod.put(player.getUniqueId(), true);
+        Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 
-			@Override
-			public void run() {
-				inBufferPeriod.put(player.getUniqueId(), false);
-			}
+            @Override
+            public void run() {
+                inBufferPeriod.put(player.getUniqueId(), false);
+            }
 
-		}, 60);
-	}
+        }, 60);
+    }
 
-	public static List<SubCommand> getCommandList() {
-		return commands;
-	}
+    public static List<SubCommand> getCommandList() {
+        return commands;
+    }
 
-	public List<IdlePlayer> getAfkPlayers() {
-		List<IdlePlayer> afkList = new ArrayList<>();
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (playerIsAFK(player)) {
-				afkList.add((IdlePlayer) player.getPlayer());
-			}
-		}
-		return afkList;
-	}
-
-	public boolean playerIsAFK(Player p) {
-		if (afkMap.get(p.getUniqueId()) == null) {
-			return false;
-		} else {
-			return afkMap.get(p.getUniqueId());
-		}
-	}
+    public List<Player> getAfkPlayers() {
+        return Bukkit.getOnlinePlayers().stream().filter(p -> ((IdlePlayer) p).isIdle())
+                .toList();
+    }
 }
