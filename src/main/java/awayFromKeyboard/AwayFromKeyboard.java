@@ -1,10 +1,7 @@
 package awayFromKeyboard;
 
 import java.io.ObjectInputFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -28,11 +25,7 @@ import net.md_5.bungee.api.ChatColor;
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor {
     private final String VERSION = "2.0";
     private static final List<SubCommand> commands = new ArrayList<>();
-    public ConcurrentMap<UUID, Boolean> afkMap = new ConcurrentHashMap<UUID, Boolean>();
-    public ConcurrentMap<UUID, Long> timeWentAFK = new ConcurrentHashMap<UUID, Long>();
-    public ConcurrentMap<UUID, Integer> runnableMap = new ConcurrentHashMap<UUID, Integer>();
-    public ConcurrentMap<UUID, Boolean> inBufferPeriod = new ConcurrentHashMap<UUID, Boolean>();
-
+    private static Set<UUID> afkPlayers = new LinkedHashSet<>();
 
     public static AwayFromKeyboard thePlugin;
 
@@ -48,12 +41,12 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         commands.add(new ReloadCommand(this));
         commands.add(new KickAllCommand(this));
 
-        Notifier.sendMsgToConsole("Enabling AwayFromKeyboard " + VERSION + "...");
+        sendMsgToConsole("Enabling AwayFromKeyboard " + VERSION + "...");
     }
 
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this); // cancel all tasks
-        Notifier.sendMsgToConsole("Disabled AwayFromKeyboard " + VERSION + ".");
+       sendMsgToConsole("Disabled AwayFromKeyboard " + VERSION + ".");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -68,12 +61,13 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 return true;
             }
 
+            // if the player doesn't see the global notifications
+            // then we need to send them command confirmation
             if (!player.hasPermission("afk.seeNotifications")) {
                 sender.sendMessage(Messages.markedYourselfAfk);
             }
 
-            setAFK(player);
-            applyBuffer(player); // prevent removal of afk status for 3 seconds
+            ((IdlePlayer) player).setIdle();
             return true;
         }
 
@@ -93,40 +87,67 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         return true;
     }
 
-    public void setAFK(Player player) {
-        afkMap.put(player.getUniqueId(), true);
-        Notifier.notify(player, "isNowAfk");
-    }
-
-//	public void removeAFK(Player player) {
-//		afkMap.put(player.getUniqueId(), false);
-//		if (player.isOnline()) player.sendMessage(Messages.noLongerAfk);
-//
-//		if (ConfigHandler.displayTabListTag) player.setPlayerListName(player.getName());
-//	}
-
-    public void error(CommandSender sender, String error) {
-        sender.sendMessage(ChatColor.RED + "Error: " + ChatColor.WHITE + error);
-    }
-
-    public void applyBuffer(Player player) {
-        inBufferPeriod.put(player.getUniqueId(), true);
-        Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-
-            @Override
-            public void run() {
-                inBufferPeriod.put(player.getUniqueId(), false);
-            }
-
-        }, 60);
-    }
-
     public static List<SubCommand> getCommandList() {
         return commands;
     }
 
-    public List<Player> getAfkPlayers() {
-        return Bukkit.getOnlinePlayers().stream().filter(p -> ((IdlePlayer) p).isIdle())
-                .toList();
+    public Set<IdlePlayer> getIdlePlayers() {
+        Set<IdlePlayer> idle = new LinkedHashSet<>();
+        afkPlayers.forEach(player -> idle.add((IdlePlayer) Bukkit.getPlayer(player)));
+        return idle;
+    }
+
+    public static void sendMsgToConsole(String info) {
+        if (!ConfigHandler.shouldNotifyConsole) return;
+        AwayFromKeyboard.thePlugin.getLogger().info(info);
+    }
+
+    public static void broadcastMessage(String theMessage) {
+        if (ConfigHandler.announceWhenKickingPlayers) Bukkit.broadcastMessage(theMessage);
+    }
+
+    public static void sendErrorMessage(CommandSender sender, String error) {
+        sender.sendMessage(ChatColor.RED + "Error: " + ChatColor.RESET + error);
+    }
+
+    public static void notify(CommandSender sender, String message) {
+        sendMsgToConsole(message);
+        Bukkit.broadcast(message, "afk.seeNotifications");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

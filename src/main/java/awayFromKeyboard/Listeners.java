@@ -1,9 +1,6 @@
 package awayFromKeyboard;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -12,83 +9,47 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class Listeners implements Listener {
-	private AwayFromKeyboard afk;
+    private AwayFromKeyboard afk;
 
-	public Listeners(AwayFromKeyboard plugin) {
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		this.afk = plugin;
-	}
+    public Listeners(AwayFromKeyboard plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        this.afk = plugin;
+    }
 
-	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player player = e.getPlayer();
-		UUID uuid = player.getUniqueId();
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        IdlePlayer player = (IdlePlayer) e.getPlayer();
 
-		int taskID = Bukkit.getScheduler().runTaskTimer(afk, new Runnable() {
+        // When the player joins, run a timer every second to check if they're idle
+        int taskID = Bukkit.getScheduler().runTaskTimer(afk, () -> {
 
-			@Override
-			public void run() {
-				if (afk.timeWentAFK.get(uuid) == null) {
-					afk.timeWentAFK.put(uuid, System.currentTimeMillis());
-				}
+            if (player.getIdleTime() > ConfigHandler.timeBeforeMarkedAFK * 1000 * 60) {
+                if (!player.isIdle()) {
+                    player.setIdle();
+                }
+            }
 
-				long timeAFK = System.currentTimeMillis() - afk.timeWentAFK.get(uuid);
-				if (timeAFK > afk.getConfig().getInt("afkTime") * 1000 * 60) {
-					if (!afk.playerIsAFK(player)) {
-						afk.setAFK(player);
-					}
-				}
+            if (!player.isOnline()) { // Player left, so stop monitoring them
+                Bukkit.getScheduler().cancelTask(player.getRunnableTaskID());
+                player.setActive();
+            }
+        }, 20, 120).getTaskId(); // 1-second delay, 1-second period
 
-				// Player left, so stop monitoring them
-				if (!player.isOnline()) {
-					int id = afk.runnableMap.get(player.getUniqueId());
-					Bukkit.getScheduler().cancelTask(id);
-					afk.removeAFK(player);
-				}
-			}
-		}, 20, 120).getTaskId(); // 1 second delay, 1 second period
+        player.setRunnableTaskID(taskID); // Save this id to allow for later cancellation
+    }
 
-		afk.runnableMap.put(uuid, taskID);
-	}
+    @EventHandler
+    public void onPlayerMoveAFK(PlayerMoveEvent e) {
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> ((IdlePlayer) e.getPlayer()).setActive());
+    }
 
-	@EventHandler
-	public void onPlayerMoveAFK(PlayerMoveEvent e) {
-		Bukkit.getScheduler().runTaskAsynchronously(afk, new Runnable() {
+    @EventHandler
+    public void onPlayerChatAFK(AsyncPlayerChatEvent e) {
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> ((IdlePlayer) e.getPlayer()).setActive());
+    }
 
-			@Override
-			public void run() {
-				Player player = e.getPlayer();
-				UUID uuid = player.getUniqueId();
-
-				/* if player afk, and not within a buffer period (aka, they just typed /afk) */
-				if (afk.playerIsAFK(player) && !afk.inBufferPeriod.get(uuid)) {
-					afk.removeAFK(player);
-				}
-
-				afk.afkMap.put(uuid, false);
-				afk.timeWentAFK.put(uuid, System.currentTimeMillis());
-			}
-		});
-
-	}
-
-	@EventHandler
-	public void onPlayerChatAFK(AsyncPlayerChatEvent e) {
-		Player player = e.getPlayer();
-		if (afk.playerIsAFK(player)) {
-			afk.removeAFK(player);
-		}
-		afk.afkMap.put(player.getUniqueId(), false);
-		afk.timeWentAFK.put(player.getUniqueId(), System.currentTimeMillis());
-	}
-
-	@EventHandler
-	public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) {
-		Player player = e.getPlayer();
-		if (afk.playerIsAFK(player)) {
-			afk.removeAFK(player);
-		}
-		afk.afkMap.put(player.getUniqueId(), false);
-		afk.timeWentAFK.put(player.getUniqueId(), System.currentTimeMillis());
-	}
+    @EventHandler
+    public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) {
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> ((IdlePlayer) e.getPlayer()).setActive());
+    }
 }

@@ -17,7 +17,7 @@ public class KickAllCommand extends SubCommand {
 	public void execute(CommandSender sender, String[] args) {
 		int players = afk.getAfkPlayers().size();
 		if (afk.getAfkPlayers().isEmpty()) {
-			afk.error(sender, "No players are away at the moment.");
+			Notifier.sendErrorMessage(sender, "No players are away at the moment.");
 			return;
 		}
 

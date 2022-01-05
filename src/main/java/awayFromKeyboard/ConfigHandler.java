@@ -1,16 +1,14 @@
 package awayFromKeyboard;
 
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class ConfigHandler {
     private static final FileConfiguration theConfig = AwayFromKeyboard.thePlugin.getConfig();
+    public static long timeBeforeMarkedAFK = theConfig.getLong("afkTime");
     public static boolean shouldNotifyConsole = theConfig.getBoolean("consoleNotifications");
     public static boolean displayTabListTag = theConfig.getBoolean("displayTabListTag");
     public static boolean announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
