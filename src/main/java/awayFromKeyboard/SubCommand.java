@@ -22,7 +22,7 @@ public abstract class SubCommand {
         return Collections.emptyList();
     }
 
-    public abstract void execute(CommandSender sender, String[] args);
+    public abstract void executeCommand(CommandSender sender, String[] args);
     
     public abstract String permission();
 

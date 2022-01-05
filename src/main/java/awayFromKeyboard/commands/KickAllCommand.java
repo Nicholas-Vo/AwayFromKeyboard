@@ -1,11 +1,14 @@
 package awayFromKeyboard.commands;
 
 import awayFromKeyboard.*;
+import awayFromKeyboard.utils.ConfigHandler;
+import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
+
+import java.util.Set;
 
 public class KickAllCommand extends SubCommand {
 
@@ -14,33 +17,32 @@ public class KickAllCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
-		int players = afk.getAfkPlayers().size();
-		if (afk.getAfkPlayers().isEmpty()) {
-			Notifier.sendErrorMessage(sender, "No players are away at the moment.");
+	public void executeCommand(CommandSender sender, String[] args) {
+		Set<IdlePlayer> theIdle = afk.getIdlePlayers();
+		if (theIdle.size() == 0) {
+			afk.sendErrorMessage(sender, "No players are away at the moment.");
 			return;
 		}
 
-		String playerOrPlayers = players == 1 ? "player" : "players";
+		String playerOrPlayers = theIdle.size() == 1 ? "player" : "players";
 
 		if (args.length == 0) {
-			sender.sendMessage("You're about to kick " + ChatColor.RED + players + " " + ChatColor.RESET
-					+ playerOrPlayers + ". Are you sure?");
+			sender.sendMessage("You're about to kick " + ChatColor.RED + theIdle.size() + " "
+					+ ChatColor.RESET  + playerOrPlayers + ". Are you sure?");
 			sender.sendMessage("To confirm, type \"/afk kickall confirm\".");
 			return;
 		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
-			Notifier.sendMsgToConsole(sender instanceof ConsoleCommandSender
-					? "You have" : sender.getName() + " has" + " kicked all AFK players.");
+			afk.sendMsgToConsole(sender instanceof ConsoleCommandSender ? "You have" : sender.getName()
+					+ " has" + " kicked all AFK players.");
 
-			afk.getAfkPlayers().forEach(player -> {
+			theIdle.forEach(player -> {
 				player.kickPlayer(Messages.messageToKickedPlayers);
-				player.setAfk(false);
+				player.forget();
 			});
 
-			// TODO: Delay this message?
-			Notifier.broadcast(Messages.announcementToServer);
+			if (ConfigHandler.announceWhenKickingPlayers) Bukkit.broadcastMessage(Messages.announcementToServer);
 		}
 	}
 

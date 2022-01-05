@@ -3,11 +3,9 @@ package awayFromKeyboard.commands;
 import awayFromKeyboard.AwayFromKeyboard;
 import awayFromKeyboard.IdlePlayer;
 import awayFromKeyboard.SubCommand;
-import org.bukkit.ChatColor;
+import awayFromKeyboard.utils.Chat;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class ListCommand extends SubCommand {
@@ -17,7 +15,7 @@ public class ListCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void executeCommand(CommandSender sender, String[] args) {
 		Set<IdlePlayer> list = afk.getIdlePlayers();
 
         if (list.size() == 0) {
@@ -27,7 +25,7 @@ public class ListCommand extends SubCommand {
 
         sender.sendMessage(list.size() == 1 ? "One player is currently AFK: " : "AFK Players: ");
 
-        list.forEach(p -> sender.sendMessage("- " + ChatColor.GRAY + p.getName() + ChatColor.RESET + ": " + p.getTimeAFK()));
+        list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ": " + p.timeAfkToString()));
     }
 
     @Override

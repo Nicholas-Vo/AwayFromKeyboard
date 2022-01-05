@@ -1,5 +1,6 @@
 package awayFromKeyboard.commands;
 
+import awayFromKeyboard.utils.Messages;
 import org.bukkit.command.CommandSender;
 
 import awayFromKeyboard.AwayFromKeyboard;
@@ -12,8 +13,8 @@ public class MenuCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
-		afk.displayMenu(sender);
+	public void executeCommand(CommandSender sender, String[] args) {
+		Messages.displayCommandMenu(sender);
 	}
 
 	@Override

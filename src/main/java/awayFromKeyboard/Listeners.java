@@ -1,6 +1,9 @@
 package awayFromKeyboard;
 
+import awayFromKeyboard.utils.ConfigHandler;
+import awayFromKeyboard.utils.Test;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -29,10 +32,11 @@ public class Listeners implements Listener {
                 }
             }
 
-            if (!player.isOnline()) { // Player left, so stop monitoring them
-                Bukkit.getScheduler().cancelTask(player.getRunnableTaskID());
-                player.setActive();
+            if (!player.isOnline()) { // Player isn't online, so stop monitoring them
+                player.forget();
+                Test.aTest("Forgetting " + ChatColor.RED + player.getName());
             }
+
         }, 20, 120).getTaskId(); // 1-second delay, 1-second period
 
         player.setRunnableTaskID(taskID); // Save this id to allow for later cancellation

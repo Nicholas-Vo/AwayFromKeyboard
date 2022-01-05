@@ -15,17 +15,6 @@ public abstract class IdlePlayer implements Player {
     private AtomicBoolean isIdle;
     private AtomicInteger runnableTaskID; // This is the taskID to allow for cancelling of the BukkitRunnable
 
-    public String getTimeAFK() {
-        long secondsAFK = (System.currentTimeMillis() - timeWentIdle.get()) / 1000;
-        String result = String.format("%02dh %02dm", TimeUnit.SECONDS.toHours(secondsAFK),
-                TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1));
-        if (secondsAFK < 72000) {
-            return String.format("%02d",
-                    TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1)) + "m";
-        }
-        return result;
-    }
-
     public long getIdleTime() {
         return System.currentTimeMillis() - timeWentIdle.get();
     }
@@ -43,12 +32,27 @@ public abstract class IdlePlayer implements Player {
         this.isIdle.set(false);
     }
 
+    public void forget() {
+        Bukkit.getScheduler().cancelTask(runnableTaskID.get());
+    }
+
     public void setRunnableTaskID(int runnableTaskID) {
         this.runnableTaskID.set(runnableTaskID);
     }
 
     public int getRunnableTaskID() {
         return runnableTaskID.get();
+    }
+
+    public String timeAfkToString() {
+        long secondsAFK = (System.currentTimeMillis() - timeWentIdle.get()) / 1000;
+        String result = String.format("%02dh %02dm", TimeUnit.SECONDS.toHours(secondsAFK),
+                TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1));
+        if (secondsAFK < 72000) {
+            return String.format("%02d",
+                    TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1)) + "m";
+        }
+        return result;
     }
 
 }

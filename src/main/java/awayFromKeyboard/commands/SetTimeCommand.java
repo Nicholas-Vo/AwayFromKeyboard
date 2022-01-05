@@ -1,5 +1,9 @@
 package awayFromKeyboard.commands;
 
+import awayFromKeyboard.utils.Chat;
+import awayFromKeyboard.utils.ConfigHandler;
+import awayFromKeyboard.utils.Messages;
+import awayFromKeyboard.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -14,34 +18,27 @@ public class SetTimeCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void executeCommand(CommandSender sender, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage("Usage: /afk settime <minutes>");
 			return;
 		}
 		
-		int input = 0;
-
-		try {
-			input = Integer.parseInt(args[0]);
-		} catch (NumberFormatException e) {
-			sender.sendMessage("That is not a valid number.");
-			return;
-		}
+		int input = Utils.parseNumber(sender, args[0], Chat.red + "Error: " + Chat.reset + "That is not a valid number.");
 
 		if (input > 1000 || input < 1) {
-			sender.sendMessage(ChatColor.RED + "You can only set the time between 2 and 1000 minutes.");
+			sender.sendMessage(Chat.red + "You can only set the time between 2 and 1000 minutes.");
 			return;
 		}
 
-		if (input == afk.getConfig().getInt("afkTime")) {
-			sender.sendMessage(ChatColor.RED + "The AFK time is already set to " + input + ".");
+		if (input == ConfigHandler.timeBeforeMarkedAFK) {
+			sender.sendMessage(Chat.red + "The AFK time is already set to " + input + ".");
 			return;
 		}
 
 		afk.getConfig().set("afkTime", input);
 		afk.saveConfig();
-		Bukkit.broadcast(afk.pluginTag + sender.getName() + " set the AFK time to " + input + " minutes.",
+		Bukkit.broadcast(Messages.pluginTag + sender.getName() + " set the AFK time to " + input + " minutes.",
 				"afk.changetime");
 	}
 

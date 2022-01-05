@@ -1,9 +1,11 @@
 package awayFromKeyboard.commands;
 
+import awayFromKeyboard.utils.Messages;
 import org.bukkit.command.CommandSender;
 
 import awayFromKeyboard.AwayFromKeyboard;
 import awayFromKeyboard.SubCommand;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class ReloadCommand extends SubCommand {
 
@@ -12,10 +14,11 @@ public class ReloadCommand extends SubCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void executeCommand(CommandSender sender, String[] args) {
 		afk.reloadConfig();
-		afk.getLogger().info(sender.getName() + " reloaded the configuration.");
-		sender.sendMessage(afk.pluginTag + "Successfully reloaded the configuration.");
+		String theReloader = (sender instanceof ConsoleCommandSender) ? "The console" : sender.getName();
+		afk.getLogger().info(theReloader + " reloaded the configuration.");
+		sender.sendMessage(Messages.pluginTag + " Successfully reloaded the configuration.");
 	}
 
 	@Override
