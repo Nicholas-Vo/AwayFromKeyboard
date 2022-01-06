@@ -17,6 +17,14 @@ consoleNotifications: true
 displayTabListTag: true
 # Should the plugin broadcast a message when kicking all AFK players?
 announceWhenKickingPlayers: true
+# Should the plugin broadcast a message when a player goes idle?
+announcePlayerNowAfk: true
+# Should the plugin broadcast a message when a player is no longer idle?
+announcePlayerNoLongerAfk: true
+# Commands that will not remove AFK status from a player
+ignoredCommands:
+    - '/msg'
+    - '/vanish'
 messages:
   announcementToServer: '&c[Notice] &7All AFK players have been kicked due to poor server performance.'
   messageToKickedPlayers: 'All AFK players have been kicked due to poor server performance.'
@@ -24,6 +32,8 @@ messages:
   isNowAfk: '&8[!] &r%playername% is now AFK.'
   noLongerAfk: '&8[!] &r%playername% is no longer AFK.'
   tabListTag: '%playername% &8AFK'
-  noPermission: '&cError: &rYou do not have permission to do that.'
+  noPermission: '&cYou do not have permission to do that.'
+  noPlayersAreAfk: 'There are no AFK players at the moment.'
+  thesePlayersAreAfk: 'The following players are currently AFK:'
   ```
 
