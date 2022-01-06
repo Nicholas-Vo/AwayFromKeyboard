@@ -14,21 +14,25 @@ public class Messages {
     public static String announcementToServer;
     public static String messageToKickedPlayers;
     public static String noPermission;
-    public static String noPlayersAreAFK;
+    public static String noPlayersAreAfk;
     public static String tabListTag;
     public static String noLongerAfk;
+    public static String thesePlayersAreAfk;
+
     public static String pluginTag;
 
-    public static void initalizeMessages() {
+    public static void rebuild() {
         msgMap = ConfigHandler.getMessageMap();
         markedYourselfAfk = msgMap.get("markedYourselfAfk");
         isNowAfk = msgMap.get("isNowAfk");
         announcementToServer = msgMap.get("announcementToServer");
         messageToKickedPlayers = msgMap.get("messageToKickedPlayers");
         noPermission = msgMap.get("noPermission");
-        noPlayersAreAFK = msgMap.get("noPlayersAreAFK");
+        noPlayersAreAfk = msgMap.get("noPlayersAreAfk");
         tabListTag = msgMap.get("tabListTag");
         noLongerAfk = msgMap.get("noLongerAfk");
+        thesePlayersAreAfk = msgMap.get("thesePlayersAreAfk");
+
         pluginTag = Chat.red + "[AwayFromKeyboard]" + Chat.reset;
     }
 

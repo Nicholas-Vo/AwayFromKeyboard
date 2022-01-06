@@ -1,6 +1,7 @@
 package awayFromKeyboard;
 
 import awayFromKeyboard.utils.Messages;
+import awayFromKeyboard.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -34,7 +35,7 @@ public class IdlePlayer {
 
         // Announce "player is now AFK" after a delay to avoid filling the chat
        int taskID = Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () // TODO add delay to config
-                -> AwayFromKeyboard.sendFormattedMessage(thePlayer, Messages.isNowAfk), 35 * 20).getTaskId();
+                -> Utils.sendFormattedMessage(thePlayer, Messages.isNowAfk), 35 * 20).getTaskId();
         isNowIdleAnnounceTaskID.set(taskID); // save taskID for later cancellation
     }
 
@@ -55,13 +56,16 @@ public class IdlePlayer {
     }
 
     public String timeIdleToString() {
-        long secondsAFK = (System.currentTimeMillis() - timeWentIdle.get()) / 1000;
+        long seconds = (System.currentTimeMillis() - timeWentIdle.get()) / 1000;
 
-        long hours = TimeUnit.SECONDS.toHours(secondsAFK);
-        long minutes = TimeUnit.HOURS.toMinutes(hours);
+        long hours = TimeUnit.SECONDS.toHours(seconds);
+        long minutes = TimeUnit.SECONDS.toMinutes(seconds);
 
-        return secondsAFK < 60 ? String.format("%2ds", secondsAFK) :
-                String.format("%02dh %02dm", hours, minutes % TimeUnit.HOURS.toMinutes(1));
+        if (seconds <= 60) return String.format("% 2ds", seconds);
+        if (minutes <= 60) return String.format("% 2dm% 2ds", minutes, seconds % 60);
+
+        else if (hours >= 1) return String.format("% 2dh% 2dm", hours, minutes % 60);
+        return String.format("% 2dm", minutes);
     }
 
     public boolean isOnline() {
@@ -75,5 +79,4 @@ public class IdlePlayer {
     public void kickPlayer(String theReason) {
         thePlayer.kickPlayer(theReason);
     }
-
 }

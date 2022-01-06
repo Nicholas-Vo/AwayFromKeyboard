@@ -4,7 +4,9 @@ import awayFromKeyboard.AwayFromKeyboard;
 import awayFromKeyboard.IdlePlayer;
 import awayFromKeyboard.SubCommand;
 import awayFromKeyboard.utils.Chat;
+import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
+import awayFromKeyboard.utils.Utils;
 import org.bukkit.command.CommandSender;
 
 import java.util.Set;
@@ -20,13 +22,14 @@ public class ListCommand extends SubCommand {
 		Set<IdlePlayer> list = afk.getIdlePlayers();
 
         if (list.size() == 0) {
-            afk.sendFormattedMessage(sender, Messages.noPlayersAreAFK);
+            Utils.sendFormattedMessage(sender, Messages.noPlayersAreAfk);
             return;
         }
 
-        sender.sendMessage(list.size() == 1 ? "One player is currently AFK: " : "AFK Players: ");
+        Utils.sendFormattedMessage(sender, Messages.thesePlayersAreAfk);
+        sender.sendMessage("AFK Players: ");
 
-        list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ": " + p.timeIdleToString()));
+        list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ":" + p.timeIdleToString()));
     }
 
     @Override

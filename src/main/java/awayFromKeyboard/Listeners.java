@@ -54,7 +54,31 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) {
+    public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) { // TODO add exception commands
+        if (ConfigHandler.getIgnoredCommands().contains(e.getMessage())) { return; }
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

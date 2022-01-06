@@ -1,14 +1,12 @@
 package awayFromKeyboard;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-
+import awayFromKeyboard.commands.KickAllCommand;
+import awayFromKeyboard.commands.ListCommand;
+import awayFromKeyboard.commands.ReloadCommand;
+import awayFromKeyboard.commands.SetTimeCommand;
 import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
-import awayFromKeyboard.utils.Test;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,10 +15,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import awayFromKeyboard.commands.KickAllCommand;
-import awayFromKeyboard.commands.ListCommand;
-import awayFromKeyboard.commands.ReloadCommand;
-import awayFromKeyboard.commands.SetTimeCommand;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor {
     private final String VERSION = "2.0";
@@ -61,12 +59,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 return true;
             }
 
-            /* If no "playername went afk" message is sent,
-               we need to send them something as confirmation */
-            if (!player.hasPermission("afk.seenotifications") || ConfigHandler.announcePlayerNowAfk) {
-                sender.sendMessage(Messages.markedYourselfAfk);
-            }
-
+            sender.sendMessage(Messages.markedYourselfAfk);
             getIdlePlayer(player).setIdle();
             return true;
         }
@@ -84,10 +77,6 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         });
 
         return true;
-    }
-
-    public static void sendFormattedMessage(CommandSender sender, String message) {
-        sender.sendMessage(message.replaceAll("%playername%", sender.getName()));
     }
 
     public IdlePlayer getIdlePlayer(Player player) {
@@ -113,6 +102,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         sendMsgToConsole(message);
         Bukkit.broadcast(message, "afk.seenotifications");
     }
+
 }
 
 

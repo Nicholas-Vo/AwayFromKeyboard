@@ -7,8 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigHandler {
     public static long timeBeforeMarkedAFK;
@@ -19,6 +18,7 @@ public class ConfigHandler {
     public static boolean displayTabListTag;
 
     private static Map<String, String> messageMap = new HashMap<>();
+    private static List<String> ignoredCommands = new ArrayList<>();
     private static AwayFromKeyboard plugin;
     private static FileConfiguration theConfig;
 
@@ -33,7 +33,7 @@ public class ConfigHandler {
         addDefaultMessage("messageToKickedPlayers", "All AFK players have been kicked due to poor server performance.");
         addDefaultMessage("tabListTag", "&8AFK");
         addDefaultMessage("noPermission", "&cYou do not have permission to do that.");
-        addDefaultMessage("noPlayersAreAFK", "There are no AFK players at the moment.");
+        addDefaultMessage("noPlayersAreAfk", "There are no AFK players at the moment.");
 
         theConfig.addDefault("afkTime", 5);
         theConfig.addDefault("consoleNotifications", true);
@@ -42,6 +42,8 @@ public class ConfigHandler {
         theConfig.addDefault("announcePlayerNowAfk", true);
         theConfig.addDefault("announcePlayerNoLongerAfk", true);
 
+        theConfig.addDefault("ignoredCommands", new ArrayList<>(Arrays.asList("/afk", "/vanish")));
+
         // TODO fix bug where comments don't show up within config
 
         plugin.saveDefaultConfig();
@@ -49,13 +51,14 @@ public class ConfigHandler {
         rebuildConfiguration();
     }
 
-    public static void initializeSettings() {
+    public static void rebuildSettings() {
         timeBeforeMarkedAFK = theConfig.getLong("afkTime");
         shouldNotifyConsole = theConfig.getBoolean("consoleNotifications");
         announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
         announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
         announcePlayerNoLongerAfk = theConfig.getBoolean("announcePlayerNoLongerAfk");
         displayTabListTag = theConfig.getBoolean("displayTabListTag");
+        ignoredCommands = theConfig.getStringList("ignoredCommands");
     }
 
     public static void save() {
@@ -76,8 +79,8 @@ public class ConfigHandler {
             messageMap.put(key, ChatColor.translateAlternateColorCodes('&', theString));
         });
 
-        Messages.initalizeMessages();
-        initializeSettings();
+        Messages.rebuild();
+        rebuildSettings();
     }
 
     public static void setConfigurationSetting(String path, String theValue) {
@@ -88,6 +91,8 @@ public class ConfigHandler {
     public static Map<String, String> getMessageMap() {
         return messageMap;
     }
+
+    public static List<String> getIgnoredCommands() { return ignoredCommands; }
 
     private void addDefaultMessage(String path, String message) {
         theConfig.addDefault("messages." + path, "'" + message + "'");
