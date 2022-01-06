@@ -25,7 +25,7 @@ public class ListCommand extends SubCommand {
 
         sender.sendMessage(list.size() == 1 ? "One player is currently AFK: " : "AFK Players: ");
 
-        list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ": " + p.timeAfkToString()));
+        list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ": " + p.timeIdleToString()));
     }
 
     @Override

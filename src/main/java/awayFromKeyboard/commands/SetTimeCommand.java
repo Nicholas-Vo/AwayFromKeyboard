@@ -36,8 +36,7 @@ public class SetTimeCommand extends SubCommand {
 			return;
 		}
 
-		afk.getConfig().set("afkTime", input);
-		afk.saveConfig();
+		ConfigHandler.setConfigurationSetting("afkTime", String.valueOf(input));
 		Bukkit.broadcast(Messages.pluginTag + sender.getName() + " set the AFK time to " + input + " minutes.",
 				"afk.changetime");
 	}

@@ -1,10 +1,10 @@
 package awayFromKeyboard.commands;
 
 import awayFromKeyboard.*;
+import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
@@ -27,8 +27,8 @@ public class KickAllCommand extends SubCommand {
 		String playerOrPlayers = theIdle.size() == 1 ? "player" : "players";
 
 		if (args.length == 0) {
-			sender.sendMessage("You're about to kick " + ChatColor.RED + theIdle.size() + " "
-					+ ChatColor.RESET  + playerOrPlayers + ". Are you sure?");
+			sender.sendMessage("You're about to kick " + Chat.red + theIdle.size() + " "
+					+ Chat.reset + playerOrPlayers + ". Are you sure?");
 			sender.sendMessage("To confirm, type \"/afk kickall confirm\".");
 			return;
 		}
@@ -42,7 +42,9 @@ public class KickAllCommand extends SubCommand {
 				player.forget();
 			});
 
-			if (ConfigHandler.announceWhenKickingPlayers) Bukkit.broadcastMessage(Messages.announcementToServer);
+			if (ConfigHandler.announceWhenKickingPlayers) {
+				Bukkit.broadcastMessage(Messages.announcementToServer);
+			}
 		}
 	}
 

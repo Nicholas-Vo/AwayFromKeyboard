@@ -1,5 +1,6 @@
 package awayFromKeyboard;
 
+import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Test;
 import org.bukkit.Bukkit;
@@ -21,7 +22,7 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        IdlePlayer player = (IdlePlayer) e.getPlayer();
+        IdlePlayer player = afk.getIdlePlayer(e.getPlayer());
 
         // When the player joins, run a timer every second to check if they're idle
         int taskID = Bukkit.getScheduler().runTaskTimer(afk, () -> {
@@ -34,7 +35,7 @@ public class Listeners implements Listener {
 
             if (!player.isOnline()) { // Player isn't online, so stop monitoring them
                 player.forget();
-                Test.aTest("Forgetting " + ChatColor.RED + player.getName());
+                Test.aTest("Forgetting about " + Chat.red + player.getName());
             }
 
         }, 20, 120).getTaskId(); // 1-second delay, 1-second period
@@ -44,16 +45,16 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerMoveAFK(PlayerMoveEvent e) {
-        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> ((IdlePlayer) e.getPlayer()).setActive());
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
     public void onPlayerChatAFK(AsyncPlayerChatEvent e) {
-        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> ((IdlePlayer) e.getPlayer()).setActive());
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
     public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) {
-        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> ((IdlePlayer) e.getPlayer()).setActive());
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 }

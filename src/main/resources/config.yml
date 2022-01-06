@@ -7,6 +7,10 @@ consoleNotifications: true
 displayTabListTag: true
 # Should the plugin broadcast a message when kicking all AFK players?
 announceWhenKickingPlayers: true
+# Should the plugin broadcast a message when a player goes idle?
+announcePlayerNowAfk: true
+# Should the plugin broadcast a message when a player is no longer idle?
+announcePlayerNoLongerAfk: true
 messages:
   announcementToServer: '&c[Notice] &7All AFK players have been kicked due to poor server performance.'
   messageToKickedPlayers: 'All AFK players have been kicked due to poor server performance.'

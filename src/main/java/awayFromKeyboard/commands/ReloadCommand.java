@@ -1,5 +1,6 @@
 package awayFromKeyboard.commands;
 
+import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.command.CommandSender;
 
@@ -15,7 +16,8 @@ public class ReloadCommand extends SubCommand {
 
 	@Override
 	public void executeCommand(CommandSender sender, String[] args) {
-		afk.reloadConfig();
+		ConfigHandler.reloadConfiguration();
+
 		String theReloader = (sender instanceof ConsoleCommandSender) ? "The console" : sender.getName();
 		afk.getLogger().info(theReloader + " reloaded the configuration.");
 		sender.sendMessage(Messages.pluginTag + " Successfully reloaded the configuration.");

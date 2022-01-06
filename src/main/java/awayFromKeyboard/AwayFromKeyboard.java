@@ -1,10 +1,14 @@
 package awayFromKeyboard;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
+import awayFromKeyboard.utils.Test;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +25,7 @@ import awayFromKeyboard.commands.SetTimeCommand;
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor {
     private final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
-    private static Set<UUID> afkPlayers = new LinkedHashSet<>();
+    public static Map<UUID, IdlePlayer> idleMap = new ConcurrentHashMap<>();
 
     public static AwayFromKeyboard thePlugin;
 
@@ -30,6 +34,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         thePlugin = this;
 
         new Listeners(this); // todo move all listeners into individual classes
+        getLogger().info("\n\nAwayFromKeyboard " + VERSION + " has loaded successfully.\n\n");
         new ConfigHandler();
 
         commands.add(new ListCommand(this));
@@ -57,13 +62,14 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 return true;
             }
 
-            // if the player doesn't see the global notifications
-            // then we need to send them command confirmation
-            if (!player.hasPermission("afk.seeNotifications")) {
+            /* If the player isn't shown a confirmation message,
+               we need to send them something */
+            if (!player.hasPermission("afk.seenotifications") || ConfigHandler.announcePlayerNowAfk) {
                 sender.sendMessage(Messages.markedYourselfAfk);
             }
 
-            ((IdlePlayer) player).setIdle();
+            IdlePlayer idler = getIdlePlayer(player);
+            idler.setIdle();
             return true;
         }
 
@@ -79,14 +85,21 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
             }
         });
 
-        Messages.displayCommandMenu(sender);
         return true;
     }
 
+    public static void sendMessage(CommandSender sender, String message) {
+        sender.sendMessage(message.replaceAll("%playername%", sender.getName()));
+    }
+
+    public IdlePlayer getIdlePlayer(Player player) {
+        var theAtomicLong = new AtomicLong(System.currentTimeMillis());
+        idleMap.computeIfAbsent(player.getUniqueId(), k -> new IdlePlayer(player, theAtomicLong));
+        return idleMap.get(player.getUniqueId());
+    }
+
     public Set<IdlePlayer> getIdlePlayers() {
-        Set<IdlePlayer> idle = new LinkedHashSet<>();
-        afkPlayers.forEach(player -> idle.add((IdlePlayer) Bukkit.getPlayer(player)));
-        return idle;
+        return idleMap.values().stream().filter(p -> p.isIdle()).collect(Collectors.toSet());
     }
 
     public static void sendMsgToConsole(String info) {
@@ -98,9 +111,9 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         sender.sendMessage(Chat.red + "Error: " + Chat.reset + error);
     }
 
-    public static void notify(CommandSender sender, String message) {
+    public static void notify(String message) {
         sendMsgToConsole(message);
-        Bukkit.broadcast(message, "afk.seeNotifications");
+        Bukkit.broadcast(message, "afk.seenotifications");
     }
 }
 

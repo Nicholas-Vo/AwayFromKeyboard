@@ -7,13 +7,14 @@ import java.util.Map;
 
 public class Messages {
     private static final Map<String, String> msgMap = ConfigHandler.getMessageMap();
+
     public static String markedYourselfAfk = msgMap.get("markedYourselfAfk");
     public static String isNowAfk = msgMap.get("isNowAfk");
-    public static String noLongerAfk = msgMap.get("noLongerAfk");
     public static String announcementToServer = msgMap.get("announcementToServer");
     public static String messageToKickedPlayers = msgMap.get("messageToKickedPlayers");
-    public static String tabListTag = msgMap.get("tabListTag");
     public static String noPermission = msgMap.get("noPermission");
+    public static String tabListTag = msgMap.get("tabListTag");
+    public static String noLongerAfk = msgMap.get("noLongerAfk");
 
     public static String pluginTag = Chat.red + "[AwayFromKeyboard]" + Chat.reset;
 
