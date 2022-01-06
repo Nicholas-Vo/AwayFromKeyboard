@@ -6,10 +6,10 @@ import org.bukkit.command.CommandSender;
 import awayFromKeyboard.AwayFromKeyboard;
 import awayFromKeyboard.SubCommand;
 
-public class MenuCommand extends SubCommand {
+public class HelpCommand extends SubCommand {
 
-	public MenuCommand(AwayFromKeyboard afk) {
-		super(afk, "menu");
+	public HelpCommand(AwayFromKeyboard afk) {
+		super(afk, "help");
 	}
 
 	@Override
@@ -19,7 +19,7 @@ public class MenuCommand extends SubCommand {
 
 	@Override
 	public String description() {
-		return "Display this menu.";
+		return "Display this menu";
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class SetTimeCommand extends SubCommand {
 
 	@Override
 	public String description() {
-		return "Time before a player is marked AFK.";
+		return "Set the time before a player is marked AFK";
 	}
 
 	@Override

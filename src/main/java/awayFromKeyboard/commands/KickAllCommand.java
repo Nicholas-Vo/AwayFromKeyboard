@@ -43,14 +43,14 @@ public class KickAllCommand extends SubCommand {
 			});
 
 			if (ConfigHandler.announceWhenKickingPlayers) {
-				Bukkit.broadcastMessage(Messages.announcementToServer);
+				Bukkit.broadcastMessage(Messages.kickAllCommandMessage);
 			}
 		}
 	}
 
 	@Override
 	public String description() {
-		return "Kick all AFK players from the server.";
+		return "Kick all AFK players from the server";
 	}
 
 	@Override

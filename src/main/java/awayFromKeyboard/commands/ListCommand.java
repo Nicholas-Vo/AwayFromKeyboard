@@ -34,7 +34,7 @@ public class ListCommand extends SubCommand {
 
     @Override
     public String description() {
-        return "List all afk players.";
+        return "List afk players";
     }
 
     @Override

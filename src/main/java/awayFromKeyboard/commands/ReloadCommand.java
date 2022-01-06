@@ -30,7 +30,7 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public String description() {
-        return "Reload the plugin.";
+        return "Reload the plugin configuration";
     }
 
     @Override
