@@ -4,30 +4,37 @@ import awayFromKeyboard.AwayFromKeyboard;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigHandler {
-    private static final FileConfiguration theConfig = AwayFromKeyboard.thePlugin.getConfig();
-    public static long timeBeforeMarkedAFK = theConfig.getLong("afkTime");
-    public static boolean shouldNotifyConsole = theConfig.getBoolean("consoleNotifications");
-    public static boolean announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
-    public static boolean displayTabListTag = theConfig.getBoolean("displayTabListTag");
-    public static boolean announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
-    public static boolean announcePlayerNoLongerAfk = theConfig.getBoolean("announcePlayerNoLongerAfk");
-    private static Map<String, String> messageMap = new HashMap<>();
+    public static long timeBeforeMarkedAFK;
+    public static boolean shouldNotifyConsole;
+    public static boolean announceWhenKickingPlayers;
+    public static boolean announcePlayerNowAfk;
+    public static boolean announcePlayerNoLongerAfk;
+    public static boolean displayTabListTag;
 
-    private static AwayFromKeyboard plugin = AwayFromKeyboard.thePlugin;
+    private static Map<String, String> messageMap = new HashMap<>();
+    private static AwayFromKeyboard plugin;
+    private static FileConfiguration theConfig;
 
     public ConfigHandler() {
+        plugin = AwayFromKeyboard.thePlugin;
+        theConfig = plugin.getConfig();
+
         addDefaultMessage("markedYourselfAfk", "You marked yourself as AFK.");
         addDefaultMessage("isNowAfk", "%playername% is now AFK.");
         addDefaultMessage("noLongerAfk", "%playername% is no longer AFK.");
         addDefaultMessage("announcementToServer", "&c[Notice] &7All AFK players have been kicked due to poor server performance.");
         addDefaultMessage("messageToKickedPlayers", "All AFK players have been kicked due to poor server performance.");
         addDefaultMessage("tabListTag", "&8AFK");
-        addDefaultMessage("noPermission", "&cError: &rYou cannot do that.");
+        addDefaultMessage("noPermission", "&cYou do not have permission to do that.");
+        addDefaultMessage("noPlayersAreAFK", "There are no AFK players at the moment.");
+
         theConfig.addDefault("afkTime", 5);
         theConfig.addDefault("consoleNotifications", true);
         theConfig.addDefault("displayTabListTag", true);
@@ -39,28 +46,49 @@ public class ConfigHandler {
 
         plugin.saveDefaultConfig();
 
+        rebuildConfiguration();
+    }
+
+    public static void initializeSettings() {
+        timeBeforeMarkedAFK = theConfig.getLong("afkTime");
+        shouldNotifyConsole = theConfig.getBoolean("consoleNotifications");
+        announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
+        announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
+        announcePlayerNoLongerAfk = theConfig.getBoolean("announcePlayerNoLongerAfk");
+        displayTabListTag = theConfig.getBoolean("displayTabListTag");
+    }
+
+    public static void save() {
+        plugin.saveConfig();
+
+        rebuildConfiguration();
+    }
+
+    public static void rebuildConfiguration() {
+        messageMap.clear();
+        plugin.saveDefaultConfig();
+
+        theConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
+
         ConfigurationSection section = theConfig.getConfigurationSection("messages");
         section.getKeys(false).forEach(key -> {
             String theString = section.getString(key);
             messageMap.put(key, ChatColor.translateAlternateColorCodes('&', theString));
         });
 
+        Messages.initalizeMessages();
+        initializeSettings();
     }
 
     public static void setConfigurationSetting(String path, String theValue) {
         theConfig.set(path, theValue);
-        plugin.saveConfig();
-    }
-
-    public static void reloadConfiguration() {
-        plugin.reloadConfig();
+        save();
     }
 
     public static Map<String, String> getMessageMap() {
         return messageMap;
     }
 
-    // why is translateAltCodes in addDefault? needed?
     private void addDefaultMessage(String path, String message) {
         theConfig.addDefault("messages." + path, "'" + message + "'");
     }

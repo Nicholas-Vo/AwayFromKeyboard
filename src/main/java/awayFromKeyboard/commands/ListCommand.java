@@ -4,6 +4,7 @@ import awayFromKeyboard.AwayFromKeyboard;
 import awayFromKeyboard.IdlePlayer;
 import awayFromKeyboard.SubCommand;
 import awayFromKeyboard.utils.Chat;
+import awayFromKeyboard.utils.Messages;
 import org.bukkit.command.CommandSender;
 
 import java.util.Set;
@@ -19,7 +20,7 @@ public class ListCommand extends SubCommand {
 		Set<IdlePlayer> list = afk.getIdlePlayers();
 
         if (list.size() == 0) {
-            sender.sendMessage("There are no AFK players at the moment.");
+            afk.sendFormattedMessage(sender, Messages.noPlayersAreAFK);
             return;
         }
 

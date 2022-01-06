@@ -18,4 +18,5 @@ messages:
   isNowAfk: '&8[!] &r%playername% is now AFK.'
   noLongerAfk: '&8[!] &r%playername% is no longer AFK.'
   tabListTag: '%playername% &8AFK'
-  noPermission: 'You do not have permission to do that.'
+  noPermission: '&cYou do not have permission to do that.'
+  noPlayersAreAFK: 'There are no AFK players at the moment.'

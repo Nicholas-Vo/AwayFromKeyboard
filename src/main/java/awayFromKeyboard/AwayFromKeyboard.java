@@ -34,7 +34,6 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         thePlugin = this;
 
         new Listeners(this); // todo move all listeners into individual classes
-        getLogger().info("\n\nAwayFromKeyboard " + VERSION + " has loaded successfully.\n\n");
         new ConfigHandler();
 
         commands.add(new ListCommand(this));
@@ -62,14 +61,13 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 return true;
             }
 
-            /* If the player isn't shown a confirmation message,
-               we need to send them something */
+            /* If no "playername went afk" message is sent,
+               we need to send them something as confirmation */
             if (!player.hasPermission("afk.seenotifications") || ConfigHandler.announcePlayerNowAfk) {
                 sender.sendMessage(Messages.markedYourselfAfk);
             }
 
-            IdlePlayer idler = getIdlePlayer(player);
-            idler.setIdle();
+            getIdlePlayer(player).setIdle();
             return true;
         }
 
@@ -88,7 +86,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         return true;
     }
 
-    public static void sendMessage(CommandSender sender, String message) {
+    public static void sendFormattedMessage(CommandSender sender, String message) {
         sender.sendMessage(message.replaceAll("%playername%", sender.getName()));
     }
 

@@ -4,7 +4,6 @@ import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,11 +12,11 @@ import java.util.concurrent.atomic.AtomicLong;
 // todo will this
 
 public class IdlePlayer {
-    private Player thePlayer;
-    private AtomicLong timeWentIdle = new AtomicLong(); // This is the time the player went idle
-    private AtomicBoolean isIdle = new AtomicBoolean();
-    private AtomicInteger runnableTaskID = new AtomicInteger(); // This is the taskID to allow for cancelling of the BukkitRunnable
-    private AtomicInteger isNowIdleAnnounceTaskID = new AtomicInteger();
+    private final Player thePlayer;
+    private final AtomicLong timeWentIdle = new AtomicLong(); // This is the time the player went idle
+    private final AtomicBoolean isIdle = new AtomicBoolean();
+    private final AtomicInteger runnableTaskID = new AtomicInteger(); // This is the taskID to allow for cancelling of the BukkitRunnable
+    private final AtomicInteger isNowIdleAnnounceTaskID = new AtomicInteger();
 
     public IdlePlayer(Player thePlayer, AtomicLong timeWentIdle) {
         this.thePlayer = thePlayer;
@@ -35,7 +34,7 @@ public class IdlePlayer {
 
         // Announce "player is now AFK" after a delay to avoid filling the chat
        int taskID = Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () // TODO add delay to config
-                -> AwayFromKeyboard.sendMessage(thePlayer, Messages.isNowAfk), 35 * 20).getTaskId();
+                -> AwayFromKeyboard.sendFormattedMessage(thePlayer, Messages.isNowAfk), 35 * 20).getTaskId();
         isNowIdleAnnounceTaskID.set(taskID); // save taskID for later cancellation
     }
 
@@ -64,20 +63,6 @@ public class IdlePlayer {
         return secondsAFK < 60 ? String.format("%2ds", secondsAFK) :
                 String.format("%02dh %02dm", hours, minutes % TimeUnit.HOURS.toMinutes(1));
     }
-
-    // if (secondsAFK < 60000) return String.format("%2d", minutes % oneHour) + "
-
-//    public String timeAfkToString() {
-//        long secondsAFK = (System.currentTimeMillis() - timeWentIdle.get()) / 1000;
-//
-//        String result = String.format("%02dh %02dm", TimeUnit.SECONDS.toHours(secondsAFK),
-//                TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1));
-//
-//        if (secondsAFK < 60000) {
-//            return String.format("%2d", TimeUnit.SECONDS.toMinutes(secondsAFK) % TimeUnit.HOURS.toMinutes(1)) + "m";
-//        }
-//        return result;
-//    }
 
     public boolean isOnline() {
         return thePlayer.isOnline();

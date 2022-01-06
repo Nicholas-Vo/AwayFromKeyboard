@@ -1,40 +1,45 @@
 package awayFromKeyboard.commands;
 
+import awayFromKeyboard.AwayFromKeyboard;
+import awayFromKeyboard.SubCommand;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.command.CommandSender;
-
-import awayFromKeyboard.AwayFromKeyboard;
-import awayFromKeyboard.SubCommand;
 import org.bukkit.command.ConsoleCommandSender;
+
+import java.io.File;
 
 public class ReloadCommand extends SubCommand {
 
-	public ReloadCommand(AwayFromKeyboard afk) {
-		super(afk, "reload");
-	}
+    public ReloadCommand(AwayFromKeyboard afk) {
+        super(afk, "reload");
+    }
 
-	@Override
-	public void executeCommand(CommandSender sender, String[] args) {
-		ConfigHandler.reloadConfiguration();
+    @Override
+    public void executeCommand(CommandSender sender, String[] args) {
+        boolean foundConfig = new File(afk.getDataFolder(), "config.yml").exists();
 
-		String theReloader = (sender instanceof ConsoleCommandSender) ? "The console" : sender.getName();
-		afk.getLogger().info(theReloader + " reloaded the configuration.");
-		sender.sendMessage(Messages.pluginTag + " Successfully reloaded the configuration.");
-	}
+        afk.reloadConfig();
+        ConfigHandler.rebuildConfiguration();
 
-	@Override
-	public String description() {
-		return "Reload the plugin.";
-	}
+        String theMessage = foundConfig ? " Successfully reloaded the configuration."
+                : " The configuration file was missing, so a new one has been created.";
 
-	@Override
-	public String usage() {
-		return "";
-	}
+        sender.sendMessage(Messages.pluginTag + theMessage);
+    }
 
-	@Override
-	public String permission() {
-		return "afk.reload";
-	}
+    @Override
+    public String description() {
+        return "Reload the plugin.";
+    }
+
+    @Override
+    public String usage() {
+        return "";
+    }
+
+    @Override
+    public String permission() {
+        return "afk.reload";
+    }
 }
