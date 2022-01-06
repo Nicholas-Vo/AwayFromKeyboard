@@ -40,7 +40,7 @@ public class Listeners implements Listener {
 
         }, 20, 120).getTaskId(); // 1-second delay, 1-second period
 
-        player.setRunnableTaskID(taskID); // Save this id to allow for later cancellation
+        player.setRunnableTaskID(taskID); //Save this id to allow for later cancellation
     }
 
     @EventHandler
