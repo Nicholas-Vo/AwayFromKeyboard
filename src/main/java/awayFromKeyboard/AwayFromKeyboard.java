@@ -91,24 +91,17 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         return idleMap.values().stream().filter(p -> p.isIdle()).collect(Collectors.toSet());
     }
 
-    public static void sendMsgToConsole(String info) {
-        if (!ConfigHandler.shouldNotifyConsole) return;
-        thePlugin.getLogger().info(info);
-    }
-
     public static void sendErrorMessage(CommandSender sender, String error) {
         sendMessage(sender, Chat.red + "Error: " + Chat.reset + error);
     }
 
     public static void sendMessage(CommandSender sender, String message) {
         String name = sender instanceof ConsoleCommandSender ? "The console" : sender.getName();
-        sender.sendMessage(message.replaceAll("%playername%", name));
+        sender.sendMessage(Chat.formatUsername(sender, name));
     }
 
-    public static void broadcastNotification(Player player, String message) { // todo remove?
-        String theMessage = message.replaceAll("%playername%", player.getName());
-        sendMsgToConsole(theMessage);
-        Bukkit.broadcast(theMessage, "afk.seenotifications");
+    public static void broadcast(Player player, String message) {
+        Bukkit.broadcast(Chat.formatUsername(player, message), "afk.seenotifications");
     }
 
     @Override

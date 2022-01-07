@@ -11,6 +11,7 @@ public class Messages {
     public static String markedYourselfAfk;
     public static String isNowAfk;
     public static String kickAllCommandMessage;
+    public static String kickAllPlayersWarning;
     public static String messageToKickedPlayers;
     public static String noPermission;
     public static String noPlayersAreAfk;
@@ -19,6 +20,7 @@ public class Messages {
     public static String thesePlayersAreAfk;
     public static String youHaveBeenAutoKicked;
     public static String autoKickAnnounce;
+    public static String youAreAboutToBeKicked;
 
     public static String pluginTag;
 
@@ -35,6 +37,8 @@ public class Messages {
         thesePlayersAreAfk = msgMap.get("thesePlayersAreAfk");
         youHaveBeenAutoKicked = msgMap.get("youHaveBeenAutoKicked");
         autoKickAnnounce = msgMap.get("autoKickAnnounce");
+        kickAllPlayersWarning = msgMap.get("kickAllPlayersWarning");
+        youAreAboutToBeKicked = msgMap.get("youAreAboutToBeKicked");
 
         pluginTag = Chat.red + "[AwayFromKeyboard]" + Chat.reset;
     }

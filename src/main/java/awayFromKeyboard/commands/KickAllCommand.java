@@ -34,17 +34,22 @@ public class KickAllCommand extends SubCommand {
 		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
-			afk.sendMsgToConsole(sender instanceof ConsoleCommandSender ? "You have" : sender.getName()
-					+ " has" + " kicked all AFK players.");
 
-			theIdle.forEach(player -> {
-				player.kickPlayer(Messages.messageToKickedPlayers);
-				player.forget();
-			});
-
-			if (ConfigHandler.announceWhenKickingPlayers) {
-				Bukkit.broadcastMessage(Messages.kickAllCommandMessage);
+			long theDelay = ConfigHandler.kickAllCommandDelay;
+			if (theDelay > 1) {
+				String theAlert = Messages.kickAllPlayersWarning.replaceAll("<time>", String.valueOf(theDelay));
+				Bukkit.broadcastMessage(theAlert);
 			}
+
+			Bukkit.getScheduler().runTaskLater(afk, () -> {
+				theIdle.forEach(player -> player.getPlayer().kickPlayer(Messages.messageToKickedPlayers));
+
+				if (ConfigHandler.announceWhenKickingPlayers) {
+					Bukkit.broadcastMessage(Messages.kickAllCommandMessage);
+				}
+
+			}, ConfigHandler.kickAllCommandDelay * 1000);
+
 		}
 	}
 

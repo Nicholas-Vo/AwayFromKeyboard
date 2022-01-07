@@ -27,7 +27,6 @@ public class ListCommand extends SubCommand {
         }
 
         afk.sendMessage(sender, Messages.thesePlayersAreAfk);
-        sender.sendMessage("AFK Players: ");
 
         list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ":" + p.timeIdleToString()));
     }

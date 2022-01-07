@@ -26,5 +26,9 @@ public class Chat  {
     public static String reset = ChatColor.RESET + "";
     public static String strike = ChatColor.STRIKETHROUGH + "";
 
+    public static String formatUsername(CommandSender sender, String aString) {
+        return aString.replaceAll("%playername%", sender.getName());
+    }
+
 }
 

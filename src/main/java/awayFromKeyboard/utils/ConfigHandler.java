@@ -12,10 +12,11 @@ import java.util.*;
 public class ConfigHandler {
     public static long timeBeforeMarkedAFK;
     public static long timeBeforeAutoKick;
-    public static long announcementDelay;
+    public static long kickAllCommandDelay;
+
     public static boolean autoKickEnabled;
-    public static boolean shouldNotifyConsole;
-    public static boolean displayTabListTag;
+    public static boolean shouldDisplayTabListTag;
+    public static boolean shouldWarnPlayersBeforeAutoKick;
 
     public static boolean announceWhenKickingPlayers;
     public static boolean announcePlayerNowAfk;
@@ -34,21 +35,23 @@ public class ConfigHandler {
         addDefaultMessage("markedYourselfAfk", "You marked yourself as AFK.");
         addDefaultMessage("isNowAfk", "%playername% is now AFK.");
         addDefaultMessage("noLongerAfk", "%playername% is no longer AFK.");
-        addDefaultMessage("announcementToServer", "&c[Notice] &7All AFK players have been manually kicked.");
-        addDefaultMessage("messageToKickedPlayers", "All AFK players have been manually kicked.");
+        addDefaultMessage("announcementToServer", "&c[Notice] &rAll AFK players have been kicked.");
+        addDefaultMessage("messageToKickedPlayers", "All AFK players have been kicked.");
         addDefaultMessage("tabListTag", "&8AFK"); // TODO add tablist functionality
         addDefaultMessage("noPermission", "&cYou do not have permission to do that.");
         addDefaultMessage("noPlayersAreAfk", "There are no AFK players at the moment.");
         addDefaultMessage("youHaveBeenAutoKicked", "You were idle for too long and have been kicked.");
-        addDefaultMessage("autoKickAnnounce", "&c[Notice] &7%playername% was idle for too long and has been kicked.");
+        addDefaultMessage("autoKickAnnounce", "&c[Notice] &r%playername% was idle for too long and has been kicked.");
+        addDefaultMessage("thesePlayersAreAfk", "The following players are currently AFK:");
+        addDefaultMessage("thesePlayersAreAfk", "The following players are currently AFK:");
 
         theConfig.addDefault("timeBeforeMarkedAFK", 10);
         theConfig.addDefault("timeBeforeAutoKick", 60);
-        theConfig.addDefault("announcementDelay", 2);
+        theConfig.addDefault("kickAllCommandDelay", 5);
 
-        theConfig.addDefault("consoleNotifications", true);
-        theConfig.addDefault("displayTabListTag", true);
-        theConfig.addDefault("autoKickEnabled", true);
+        theConfig.addDefault("shouldDisplayTabListTag", true);
+        theConfig.addDefault("autoKickEnabled", false);
+        theConfig.addDefault("shouldWarnPlayersBeforeAutoKick", true);
 
         theConfig.addDefault("announceWhenKickingPlayers", true);
         theConfig.addDefault("announcePlayerNowAfk", true);
@@ -66,15 +69,14 @@ public class ConfigHandler {
 
     public static void rebuildSettings() {
         timeBeforeMarkedAFK = theConfig.getInt("afkTime");
-        announcementDelay = theConfig.getInt("delayBeforeAfkStatusAnnounced");
         timeBeforeAutoKick = theConfig.getInt("timeBeforeAutoKick");
 
-        shouldNotifyConsole = theConfig.getBoolean("consoleNotifications");
         announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
         announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
         announcePlayerNoLongerAfk = theConfig.getBoolean("announcePlayerNoLongerAfk");
-        displayTabListTag = theConfig.getBoolean("displayTabListTag");
+        shouldDisplayTabListTag = theConfig.getBoolean("displayTabListTag");
         autoKickEnabled = theConfig.getBoolean("autoKickEnabled");
+        shouldWarnPlayersBeforeAutoKick = theConfig.getBoolean("shouldWarnPlayersBeforeAutoKick");
 
         ignoredCommands = theConfig.getStringList("ignoredCommands");
     }
