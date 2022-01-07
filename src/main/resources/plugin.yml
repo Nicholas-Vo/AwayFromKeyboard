@@ -29,3 +29,6 @@ permissions:
   afk.seenotifications:
     description: View plugin notifications
     default: true
+  afk.kickexempt:
+    description: Exempt from automatic kicks
+    default: op

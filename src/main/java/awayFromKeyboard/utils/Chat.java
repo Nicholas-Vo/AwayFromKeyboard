@@ -1,6 +1,7 @@
 package awayFromKeyboard.utils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class Chat  {
     public static String aqua = ChatColor.AQUA + "";
@@ -24,5 +25,6 @@ public class Chat  {
     public static String pink = ChatColor.LIGHT_PURPLE + "";
     public static String reset = ChatColor.RESET + "";
     public static String strike = ChatColor.STRIKETHROUGH + "";
+
 }
 

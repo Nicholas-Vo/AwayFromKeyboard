@@ -23,7 +23,7 @@ public class ReloadCommand extends SubCommand {
         ConfigHandler.rebuildConfiguration();
 
         String theMessage = foundConfig ? " Successfully reloaded the configuration."
-                : " The configuration file was missing, so a new one has been created.";
+                : " The configuration file was missing, so a new one was generated.";
 
         sender.sendMessage(Messages.pluginTag + theMessage);
     }

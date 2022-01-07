@@ -17,6 +17,8 @@ public class Messages {
     public static String tabListTag;
     public static String noLongerAfk;
     public static String thesePlayersAreAfk;
+    public static String youHaveBeenAutoKicked;
+    public static String autoKickAnnounce;
 
     public static String pluginTag;
 
@@ -31,13 +33,15 @@ public class Messages {
         tabListTag = msgMap.get("tabListTag");
         noLongerAfk = msgMap.get("noLongerAfk");
         thesePlayersAreAfk = msgMap.get("thesePlayersAreAfk");
+        youHaveBeenAutoKicked = msgMap.get("youHaveBeenAutoKicked");
+        autoKickAnnounce = msgMap.get("autoKickAnnounce");
 
         pluginTag = Chat.red + "[AwayFromKeyboard]" + Chat.reset;
     }
 
     public static void displayCommandMenu(CommandSender sender) {
         String arrow = Chat.gray + "> " + Chat.darkGray;
-        sender.sendMessage("AwayFromKeyboard " + Chat.gray + "v" + AwayFromKeyboard.VERSION);
+        sender.sendMessage(Chat.green + "AwayFromKeyboard " + Chat.gray + "v" + AwayFromKeyboard.VERSION);
 
         if (sender.hasPermission("afk.goafk"))
             sender.sendMessage(arrow + "/afk" + Chat.reset + " - " + "Set yourself AFK");

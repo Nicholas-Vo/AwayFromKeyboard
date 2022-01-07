@@ -5,9 +5,7 @@ import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor {
+public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
     public static final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
     public static Map<UUID, IdlePlayer> idleMap = new ConcurrentHashMap<>();
@@ -56,23 +54,27 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
             }
 
             if (!player.hasPermission("afk.goafk")) {
-                sender.sendMessage(Messages.noPermission);
+                sendMessage(sender, Messages.noPermission);
                 return true;
             }
 
-            sender.sendMessage(Messages.markedYourselfAfk);
+            // need to send the player confirmation if there wasn't an announcement message
+            if (!ConfigHandler.announcePlayerNowAfk || !player.hasPermission("afk.seenotifications")) {
+                sendMessage(player, Messages.markedYourselfAfk);
+            }
+
             getIdlePlayer(player).setIdle();
             return true;
         }
 
         String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
 
-        commands.forEach(subCmd -> {
-            if (subCmd.getName().equals(args[0])) {
-                if (sender.hasPermission(subCmd.permission())) {
-                    subCmd.executeCommand(sender, restOfArgs);
+        commands.forEach(subCommand -> {
+            if (subCommand.getName().equals(args[0])) {
+                if (sender.hasPermission(subCommand.permission())) {
+                    subCommand.executeCommand(sender, restOfArgs);
                 } else {
-                    sender.sendMessage(Messages.noPermission);
+                    sendMessage(sender, Messages.noPermission);
                 }
             }
         });
@@ -81,8 +83,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     }
 
     public IdlePlayer getIdlePlayer(Player player) {
-        var theAtomicLong = new AtomicLong(System.currentTimeMillis());
-        idleMap.computeIfAbsent(player.getUniqueId(), k -> new IdlePlayer(player, theAtomicLong));
+        idleMap.computeIfAbsent(player.getUniqueId(), k -> new IdlePlayer(player, System.currentTimeMillis()));
         return idleMap.get(player.getUniqueId());
     }
 
@@ -92,16 +93,47 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
 
     public static void sendMsgToConsole(String info) {
         if (!ConfigHandler.shouldNotifyConsole) return;
-        AwayFromKeyboard.thePlugin.getLogger().info(info);
+        thePlugin.getLogger().info(info);
     }
 
     public static void sendErrorMessage(CommandSender sender, String error) {
-        sender.sendMessage(Chat.red + "Error: " + Chat.reset + error);
+        sendMessage(sender, Chat.red + "Error: " + Chat.reset + error);
     }
 
-    public static void notify(String message) {
-        sendMsgToConsole(message);
-        Bukkit.broadcast(message, "afk.seenotifications");
+    public static void sendMessage(CommandSender sender, String message) {
+        String name = sender instanceof ConsoleCommandSender ? "The console" : sender.getName();
+        sender.sendMessage(message.replaceAll("%playername%", name));
+    }
+
+    public static void broadcastNotification(Player player, String message) { // todo remove?
+        String theMessage = message.replaceAll("%playername%", player.getName());
+        sendMsgToConsole(theMessage);
+        Bukkit.broadcast(theMessage, "afk.seenotifications");
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+       var results = new ArrayList<String>();
+        if (args.length == 1) {
+            for (String string : getResults(sender)) {
+                if (string.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    results.add(string);
+                }
+            }
+            return results;
+        }
+
+        return List.of(); // stop tab completion by returning empty list
+    }
+
+    private Set<String> getResults(CommandSender sender) {
+        var set = new HashSet<String>();
+        commands.forEach(aCommand -> {
+            if (sender.hasPermission(aCommand.permission())) {
+                set.add(aCommand.getName());
+            }
+        });
+        return set;
     }
 
 }

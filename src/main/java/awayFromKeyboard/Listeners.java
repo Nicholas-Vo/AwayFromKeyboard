@@ -1,10 +1,8 @@
 package awayFromKeyboard;
 
-import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
-import awayFromKeyboard.utils.Test;
+import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -26,6 +24,7 @@ public class Listeners implements Listener {
 
         // When the player joins, run a timer every second to check if they're idle
         int taskID = Bukkit.getScheduler().runTaskTimer(afk, () -> {
+            if (!player.isOnline()) { player.forget(); } // Player isn't online, so stop monitoring them
 
             if (player.getIdleTime() > ConfigHandler.timeBeforeMarkedAFK * 1000 * 60) {
                 if (!player.isIdle()) {
@@ -33,9 +32,15 @@ public class Listeners implements Listener {
                 }
             }
 
-            if (!player.isOnline()) { // Player isn't online, so stop monitoring them
-                player.forget();
-                Test.aTest("Forgetting about " + Chat.red + player.getName());
+            boolean playerEligible = !player.hasPermission("afk.kickexempt") &&
+                    player.getIdleTime() >= ConfigHandler.timeBeforeAutoKick;
+
+            if (ConfigHandler.autoKickEnabled && playerEligible) {
+                player.kickPlayer(Messages.youHaveBeenAutoKicked);
+
+                if (ConfigHandler.announceAutoKick) {
+                    afk.broadcastNotification(e.getPlayer(), Messages.autoKickAnnounce);
+                }
             }
 
         }, 20, 120).getTaskId(); // 1-second delay, 1-second period

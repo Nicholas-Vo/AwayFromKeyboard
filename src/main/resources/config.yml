@@ -1,7 +1,13 @@
 # The amount of time in minutes a player must be away before being marked as AFK
 afkTime: 5
+# The delay in seconds before a "player is now AFK/no longer AFK" message is sent
+delayBeforeAfkStatusAnnounced: 2
 # The delay in milliseconds before the /afk kickall command kicks all players. Set to 0 to disable this
 kickAllCommandDelay: 1200
+# Should players be automatically kicked after a set period of time?
+autoKickEnabled: true
+# Time in minutes before a player is automatically kicked
+timeBeforeAutoKick: 60
 # Should the console be notified when a player's AFK status changes?
 consoleNotifications: true
 # Should the tablist be modified to display AFK players? Set this to false
@@ -18,9 +24,11 @@ ignoredCommands:
     - '/msg'
     - '/vanish'
 messages:
-  kickAllCommandMessage: '&c[Notice] &7All AFK players have been kicked due to poor server performance.'
+  kickAllCommandMessage: '&c[Notice] &7All AFK players have been manually kicked.'
   kickAllPlayersWarning: '&c[Notice] &7All AFK players will be kicked from the server in <minutes> minutes.'
-  messageToKickedPlayers: 'All AFK players have been kicked due to poor server performance.'
+  messageToKickedPlayers: 'All AFK players have been manually kicked.'
+  youHaveBeenAutoKicked: 'You were idle for too long and have been kicked.'
+  autoKickAnnounce: '&c[Notice] &7%playername% was idle for too long and has been kicked.'
   markedYourselfAfk: 'You marked yourself as AFK.'
   isNowAfk: '&8[!] &r%playername% is now AFK.'
   noLongerAfk: '&8[!] &r%playername% is no longer AFK.'
