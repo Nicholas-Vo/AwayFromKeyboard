@@ -4,7 +4,7 @@ Minecraft Bukkit plugin to detect when players have gone idle.
 
 # Command menu
 
-![afkmenu](https://user-images.githubusercontent.com/60233722/97815421-71150b80-1c53-11eb-8e7f-8f0b08c3309b.PNG)
+![theMenu](https://user-images.githubusercontent.com/60233722/148627813-cd7a1753-42a0-4ad3-a042-c8d99c737c8a.PNG)
 
 # Configuration
 ```
