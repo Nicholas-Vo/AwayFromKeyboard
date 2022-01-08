@@ -16,7 +16,7 @@ public class ConfigHandler {
 
     public static boolean autoKickEnabled;
     public static boolean shouldDisplayTabListTag;
-    public static boolean shouldWarnPlayersBeforeAutoKick;
+    public static boolean ShouldWarnBeforeKick;
 
     public static boolean announceWhenKickingPlayers;
     public static boolean announcePlayerNowAfk;
@@ -43,7 +43,7 @@ public class ConfigHandler {
         addDefaultMessage("youHaveBeenAutoKicked", "You were idle for too long and have been kicked.");
         addDefaultMessage("autoKickAnnounce", "&c[Notice] &r%playername% was idle for too long and has been kicked.");
         addDefaultMessage("thesePlayersAreAfk", "The following players are currently AFK:");
-        addDefaultMessage("thesePlayersAreAfk", "The following players are currently AFK:");
+        addDefaultMessage("youAreAboutToBeKicked", "&c[Notice] &rYou are about to be kicked for idling for too long.");
 
         theConfig.addDefault("timeBeforeMarkedAFK", 10);
         theConfig.addDefault("timeBeforeAutoKick", 60);
@@ -68,15 +68,15 @@ public class ConfigHandler {
     }
 
     public static void rebuildSettings() {
-        timeBeforeMarkedAFK = theConfig.getInt("afkTime");
-        timeBeforeAutoKick = theConfig.getInt("timeBeforeAutoKick");
+        timeBeforeMarkedAFK = (long) theConfig.getInt("afkTime") * 1000 * 60;
+        timeBeforeAutoKick = (long) theConfig.getInt("timeBeforeAutoKick") * 1000 * 60;
 
         announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
         announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
         announcePlayerNoLongerAfk = theConfig.getBoolean("announcePlayerNoLongerAfk");
         shouldDisplayTabListTag = theConfig.getBoolean("displayTabListTag");
         autoKickEnabled = theConfig.getBoolean("autoKickEnabled");
-        shouldWarnPlayersBeforeAutoKick = theConfig.getBoolean("shouldWarnPlayersBeforeAutoKick");
+        ShouldWarnBeforeKick = theConfig.getBoolean("shouldWarnPlayersBeforeAutoKick");
 
         ignoredCommands = theConfig.getStringList("ignoredCommands");
     }

@@ -45,4 +45,4 @@ messages:
   noPermission: '&cYou do not have permission to do that.'
   noPlayersAreAfk: 'There are no AFK players at the moment.'
   thesePlayersAreAfk: 'The following players are currently AFK:'
-  youAreAboutToBeKicked: '&c[Notice] &rYou have been idle for too long and are about to be kicked.'
+  youAreAboutToBeKicked: '&c[Notice] &rYou are about to be kicked for idling for too long.'

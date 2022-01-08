@@ -26,8 +26,9 @@ public class IdlePlayer {
 
     public boolean isIdle() { return isIdle; }
 
-    public void setIdle() { // Delay setting of idle by a few seconds
-        Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () -> isIdle = true, 2 * 20);
+    public void setIdle() {
+        if (isIdle) return;
+        isIdle = true;
 
         if (ConfigHandler.shouldDisplayTabListTag) {
             savedTabList = thePlayer.getPlayerListName();
@@ -41,20 +42,20 @@ public class IdlePlayer {
         timeWentIdle = System.currentTimeMillis();
 
         if (!isIdle) return;
-
         isIdle = false;
 
         if (ConfigHandler.shouldDisplayTabListTag) thePlayer.setPlayerListName(savedTabList);
 
         if (ConfigHandler.announcePlayerNoLongerAfk) {
-            Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin,
-                    () -> AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk), 2 * 20);
+            Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () -> {
+                if (thePlayer.isOnline()) { AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk); }
+            }, 2 * 20);
         }
     }
 
-    public void forget() {
-        Bukkit.getScheduler().cancelTask(runnableTaskID);
-    }
+    public boolean isKickExempt() { return thePlayer.hasPermission("afk.kickexempt"); }
+
+    public void forget() { Bukkit.getScheduler().cancelTask(runnableTaskID); }
 
     public void setRunnableTaskID(int runnableTaskID) {
         this.runnableTaskID = runnableTaskID;

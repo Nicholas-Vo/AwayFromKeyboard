@@ -2,6 +2,7 @@ package awayFromKeyboard.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class Chat  {
     public static String aqua = ChatColor.AQUA + "";
@@ -27,7 +28,8 @@ public class Chat  {
     public static String strike = ChatColor.STRIKETHROUGH + "";
 
     public static String formatUsername(CommandSender sender, String aString) {
-        return aString.replaceAll("%playername%", sender.getName());
+        String name = sender instanceof ConsoleCommandSender ? "The console" : sender.getName();
+        return aString.replaceAll("%playername%", name);
     }
 
 }

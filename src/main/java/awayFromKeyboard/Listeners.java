@@ -7,12 +7,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
+import java.util.concurrent.TimeUnit;
+
 public class Listeners implements Listener {
     private AwayFromKeyboard afk;
 
     public Listeners(AwayFromKeyboard plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        this.afk = plugin;
+        afk = plugin;
     }
 
     @EventHandler
@@ -22,21 +24,23 @@ public class Listeners implements Listener {
 
         // When the player joins, run a timer every second to check if they're idle
         int taskID = Bukkit.getScheduler().runTaskTimer(afk, () -> {
+            long idleTime = player.getIdleTime();
 
-            if (player.getIdleTime() > ConfigHandler.timeBeforeMarkedAFK * 1000 * 60) {
-                if (!player.isIdle()) {
-                    player.setIdle();
-                }
+            if (idleTime > ConfigHandler.timeBeforeMarkedAFK) {
+                player.setIdle();
+                return;
             }
 
-            boolean playerEligible = !player.hasPermission("afk.kickexempt") &&
-                    player.getIdleTime() >= ConfigHandler.timeBeforeAutoKick * 1000 * 60;
+            if (player.isKickExempt() || idleTime < ConfigHandler.timeBeforeAutoKick) {
+                return;
+            }
 
-            if (ConfigHandler.shouldWarnPlayersBeforeAutoKick) {
+            boolean timeToWarn = idleTime == ConfigHandler.timeBeforeAutoKick - TimeUnit.MILLISECONDS.toMinutes(1);
+            if (ConfigHandler.ShouldWarnBeforeKick && timeToWarn) {
                 afk.sendMessage(e.getPlayer(), Messages.youAreAboutToBeKicked);
             }
 
-            if (ConfigHandler.autoKickEnabled && playerEligible) {
+            if (ConfigHandler.autoKickEnabled) {
                 player.kickPlayer(Messages.youHaveBeenAutoKicked);
 
                 if (ConfigHandler.announceAutoKick) {
@@ -44,7 +48,7 @@ public class Listeners implements Listener {
                 }
             }
 
-        }, 20, 120).getTaskId(); // todo: 20, 120 - correct?
+        }, 0, 20).getTaskId(); // todo: 20, 120 - correct?
 
         player.setRunnableTaskID(taskID); // Save this id to allow for later cancellation
     }
@@ -60,8 +64,9 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) { // TODO add exception commands
+    public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) {
         if (ConfigHandler.getIgnoredCommands().contains(e.getMessage())) { return; }
+        if (e.getMessage().startsWith("/afk")) { return; } // Setting yourself afk will trigger this setActive()
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 

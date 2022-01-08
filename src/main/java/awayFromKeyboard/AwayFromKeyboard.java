@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,6 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     public static final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
     public static Map<UUID, IdlePlayer> idleMap = new ConcurrentHashMap<>();
-
     public static AwayFromKeyboard thePlugin;
 
     public void onEnable() {
@@ -34,9 +34,6 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         commands.add(new ReloadCommand(this));
         commands.add(new KickAllCommand(this));
         commands.add(new HelpCommand(this));
-
-        // TODO - add tab completion
-        // TODO - add configurable delay to /afk kickall
 
         getLogger().info("Successfully enabled AwayFromKeyboard v" + VERSION + ".");
     }
@@ -63,8 +60,15 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 sendMessage(player, Messages.markedYourselfAfk);
             }
 
-            getIdlePlayer(player).setIdle();
-            return true;
+            IdlePlayer thePlayer = getIdlePlayer(player);
+
+            if (thePlayer.isIdle()) {
+                player.sendMessage(Chat.red + "You are already set as idle.");
+                return true;
+            }
+
+            thePlayer.setIdle();
+            return false;
         }
 
         String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -96,8 +100,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     }
 
     public static void sendMessage(CommandSender sender, String message) {
-        String name = sender instanceof ConsoleCommandSender ? "The console" : sender.getName();
-        sender.sendMessage(Chat.formatUsername(sender, name));
+        sender.sendMessage(Chat.formatUsername(sender, message));
     }
 
     public static void broadcast(Player player, String message) {
