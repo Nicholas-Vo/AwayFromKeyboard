@@ -8,26 +8,36 @@ Minecraft Bukkit plugin to detect when players have gone idle.
 
 # Configuration
 ```
-# The amount of time a player must be away before being marked as AFK.
+# The amount of time in minutes a player must be away before being marked as AFK
 afkTime: 5
-# Should the console be notified when a player's AFK status changes?
-consoleNotifications: true
+# The delay in seconds before the /afk kickall command kicks all players. Set to 0 to disable this.
+# If set above 0, the "kickAllPlayersWarning" message will display before players are kicked
+kickAllCommandDelay: 2
+# Should players be automatically kicked after a set period of time?
+autoKickEnabled: false
+# Should we warn the player before they're automatically kicked?
+shouldWarnPlayersBeforeAutoKick: true
+# Time in minutes before a player is automatically kicked
+timeBeforeAutoKick: 60
 # Should the tablist be modified to display AFK players? Set this to false
 # if another plugin is modifying your tablist.
-displayTabListTag: true
-# Should the plugin broadcast a message when kicking all AFK players?
+shouldDisplayTabListTag: true
+# Should the plugin broadcast a message when the /afk kickall command is ran?
 announceWhenKickingPlayers: true
 # Should the plugin broadcast a message when a player goes idle?
 announcePlayerNowAfk: true
 # Should the plugin broadcast a message when a player is no longer idle?
 announcePlayerNoLongerAfk: true
-# Commands that will not remove AFK status from a player
+# Commands that will not remove AFK status from a player. /afk commands do not by default.
 ignoredCommands:
-    - '/msg'
-    - '/vanish'
+    - '/example'
+    - '/example2'
 messages:
-  announcementToServer: '&c[Notice] &7All AFK players have been kicked due to poor server performance.'
-  messageToKickedPlayers: 'All AFK players have been kicked due to poor server performance.'
+  kickAllCommandMessage: '&c[Notice] &rAll AFK players have been kicked.'
+  kickAllPlayersWarning: '&c[Notice] &rAll AFK players will be kicked from the server in <minutes> minutes.'
+  messageToKickedPlayers: 'All AFK players have been kicked.'
+  youHaveBeenAutoKicked: 'You were idle for too long and have been kicked.'
+  autoKickAnnounce: '&c[Notice] &r%playername% was idle for too long and has been kicked.'
   markedYourselfAfk: 'You marked yourself as AFK.'
   isNowAfk: '&8[!] &r%playername% is now AFK.'
   noLongerAfk: '&8[!] &r%playername% is no longer AFK.'
@@ -35,5 +45,6 @@ messages:
   noPermission: '&cYou do not have permission to do that.'
   noPlayersAreAfk: 'There are no AFK players at the moment.'
   thesePlayersAreAfk: 'The following players are currently AFK:'
+  youAreAboutToBeKicked: '&c[Notice] &rYou are about to be kicked for idling for too long.'
   ```
 
