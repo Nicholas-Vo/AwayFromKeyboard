@@ -14,13 +14,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
     public static final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
-    public static Map<UUID, IdlePlayer> idleMap = new ConcurrentHashMap<>();
+    public static Map<UUID, IdlePlayer> idleMap = new HashMap<>();
     public static AwayFromKeyboard thePlugin;
 
     public void onEnable() {
@@ -94,12 +93,16 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     }
 
     public IdlePlayer getIdlePlayer(Player player) {
-        idleMap.computeIfAbsent(player.getUniqueId(), k -> new IdlePlayer(player, System.currentTimeMillis()));
+        idleMap.computeIfAbsent(player.getUniqueId(), x -> new IdlePlayer(player, System.currentTimeMillis()));
         return idleMap.get(player.getUniqueId());
     }
 
     public Set<IdlePlayer> getIdlePlayers() {
         return idleMap.values().stream().filter(p -> p.isIdle()).collect(Collectors.toSet());
+    }
+
+    public static void removeFromIdleMap(UUID uuid) {
+        idleMap.remove(uuid);
     }
 
     public static void sendErrorMessage(CommandSender sender, String error) {

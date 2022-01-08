@@ -20,7 +20,7 @@ public class KickAllCommand extends SubCommand {
 	public void executeCommand(CommandSender sender, String[] args) {
 		Set<IdlePlayer> theIdle = afk.getIdlePlayers();
 		if (theIdle.size() == 0) {
-			afk.sendErrorMessage(sender, "No players are away at the moment.");
+			sender.sendMessage("There aren't any idle players to kick at the moment.");
 			return;
 		}
 
@@ -29,7 +29,7 @@ public class KickAllCommand extends SubCommand {
 		if (args.length == 0) {
 			sender.sendMessage("You're about to kick " + Chat.red + theIdle.size() + " "
 					+ Chat.reset + playerOrPlayers + ". Are you sure?");
-			sender.sendMessage("To confirm, type \"/afk kickall confirm\".");
+			sender.sendMessage("To confirm, type " + Chat.red + "\"/afk kickall confirm\"" + Chat.reset + ".");
 			return;
 		}
 
@@ -42,7 +42,11 @@ public class KickAllCommand extends SubCommand {
 			}
 
 			Bukkit.getScheduler().runTaskLater(afk, () -> {
-				theIdle.forEach(player -> player.kickPlayer(Messages.messageToKickedPlayers));
+				theIdle.forEach(player -> {
+					if (player != sender) {
+						player.kickPlayer(Messages.messageToKickedPlayers); // don't kick the command sender
+					}
+				});
 
 				if (ConfigHandler.announceWhenKickingPlayers) {
 					Bukkit.broadcastMessage(Messages.kickAllCommandMessage);

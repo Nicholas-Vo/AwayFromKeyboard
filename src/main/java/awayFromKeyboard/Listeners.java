@@ -54,24 +54,29 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMoveAFK(PlayerMoveEvent e) {
+    public void onPlayerMove(PlayerMoveEvent e) {
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
-    public void onPlayerChatAFK(AsyncPlayerChatEvent e) {
+    public void onPlayerChat(AsyncPlayerChatEvent e) {
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
-    public void onPlayerCommandAFK(PlayerCommandPreprocessEvent e) {
+    public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         if (ConfigHandler.getIgnoredCommands().contains(e.getMessage())) { return; }
         if (e.getMessage().startsWith("/afk")) { return; } // Setting yourself afk will trigger this setActive()
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
-    public void onPlayerQuitAFK(PlayerQuitEvent e) {
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        afk.getIdlePlayer(e.getPlayer()).forget();
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent e) {
         afk.getIdlePlayer(e.getPlayer()).forget();
     }
 

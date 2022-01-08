@@ -32,9 +32,9 @@ public class IdlePlayer {
 
     public void setIdle() {
         if (isIdle) return;
-        isIdle = true; Bukkit.broadcastMessage(thePlayer.getName() + " set to idle");
+        isIdle = true;
 
-        tasks.forEach(id -> Bukkit.getScheduler().cancelTask(id));
+        clearNotificationTasks();
 
         if (ConfigHandler.shouldDisplayTabListTag) {
             savedTabList = thePlayer.getPlayerListName();
@@ -50,16 +50,22 @@ public class IdlePlayer {
         if (!isIdle) return;
         isIdle = false;
 
-        tasks.forEach(id -> Bukkit.getScheduler().cancelTask(id));
+        clearNotificationTasks();
 
         if (ConfigHandler.shouldDisplayTabListTag) thePlayer.setPlayerListName(savedTabList);
 
         if (ConfigHandler.announcePlayerNoLongerAfk) {
            int taskId = Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () -> {
-                if (thePlayer.isOnline()) { AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk); }
+
+               if (thePlayer.isOnline()) { AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk); }
+
             }, 2 * 20).getTaskId(); // todo remove delay?
             tasks.add(taskId); // add to list for later cancellation
         }
+    }
+
+    public void clearNotificationTasks() {
+        tasks.forEach(id -> Bukkit.getScheduler().cancelTask(id));
     }
 
     public void addToCooldown() {
@@ -72,15 +78,17 @@ public class IdlePlayer {
 
     public boolean isKickExempt() { return thePlayer.hasPermission("afk.kickexempt"); }
 
-    public void forget() { Bukkit.getScheduler().cancelTask(runnableTaskID); }
+    public void forget() {
+        Bukkit.getScheduler().cancelTask(runnableTaskID);
+        clearNotificationTasks();
+        AwayFromKeyboard.removeFromIdleMap(thePlayer.getUniqueId());
+    }
 
     public void setRunnableTaskID(int runnableTaskID) {
         this.runnableTaskID = runnableTaskID;
     }
 
-    public boolean isOnline() {
-        return thePlayer.isOnline();
-    }
+    public boolean isOnline() { return thePlayer.isOnline(); }
 
     public String getName() {
         return thePlayer.getName();
