@@ -1,6 +1,6 @@
 ![AFKICON](https://user-images.githubusercontent.com/60233722/106799057-6720f100-6624-11eb-9245-69ee555e9811.PNG)
 
-Minecraft Bukkit plugin to detect when players have gone idle.
+Minecraft Bukkit plugin to detect when players have gone idle. Allows admins to kick all currenly idle players or configure the plugin to do do automatically after a player has been idle for X amount of time.
 
 # Command menu
 
