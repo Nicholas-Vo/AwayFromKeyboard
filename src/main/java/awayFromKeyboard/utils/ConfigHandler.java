@@ -74,7 +74,7 @@ public class ConfigHandler {
         announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
         announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
         announcePlayerNoLongerAfk = theConfig.getBoolean("announcePlayerNoLongerAfk");
-        shouldDisplayTabListTag = theConfig.getBoolean("displayTabListTag");
+        shouldDisplayTabListTag = theConfig.getBoolean("shouldDisplayTabListTag");
         autoKickEnabled = theConfig.getBoolean("autoKickEnabled");
         ShouldWarnBeforeKick = theConfig.getBoolean("shouldWarnPlayersBeforeAutoKick");
 

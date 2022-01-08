@@ -42,13 +42,13 @@ public class KickAllCommand extends SubCommand {
 			}
 
 			Bukkit.getScheduler().runTaskLater(afk, () -> {
-				theIdle.forEach(player -> player.getPlayer().kickPlayer(Messages.messageToKickedPlayers));
+				theIdle.forEach(player -> player.kickPlayer(Messages.messageToKickedPlayers));
 
 				if (ConfigHandler.announceWhenKickingPlayers) {
 					Bukkit.broadcastMessage(Messages.kickAllCommandMessage);
 				}
 
-			}, ConfigHandler.kickAllCommandDelay * 1000);
+			}, ConfigHandler.kickAllCommandDelay * 20);
 
 		}
 	}

@@ -5,15 +5,16 @@ import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
@@ -67,6 +68,12 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 return true;
             }
 
+            if (thePlayer.inCooldown()) {
+                player.sendMessage(Chat.red + "You are doing that too much. Try again in a little while.");
+                return true;
+            }
+
+            thePlayer.addToCooldown();
             thePlayer.setIdle();
             return false;
         }
@@ -109,7 +116,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-       var results = new ArrayList<String>();
+        var results = new ArrayList<String>();
         if (args.length == 1) {
             for (String string : getResults(sender)) {
                 if (string.toLowerCase().startsWith(args[0].toLowerCase())) {
