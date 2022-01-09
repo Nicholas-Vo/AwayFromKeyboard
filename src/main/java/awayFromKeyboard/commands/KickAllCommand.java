@@ -35,16 +35,17 @@ public class KickAllCommand extends SubCommand {
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
 
-			long theDelay = ConfigHandler.kickAllCommandDelay;
-			if (theDelay > 1) {
-				String theAlert = Messages.kickAllPlayersWarning.replaceAll("<time>", String.valueOf(theDelay));
+			if (ConfigHandler.kickAllCommandDelay > 0) {
+				String theAlert = Messages.kickAllPlayersWarning.replaceAll("<seconds>", String.valueOf(ConfigHandler.kickAllCommandDelay / 20));
 				Bukkit.broadcastMessage(theAlert);
 			}
 
 			Bukkit.getScheduler().runTaskLater(afk, () -> {
+				if (theIdle.size() == 0) return;
+
 				theIdle.forEach(player -> {
-					if (player != sender) {
-						player.kickPlayer(Messages.messageToKickedPlayers); // don't kick the command sender
+					if (player != sender && player.isIdle()) {
+						player.kickPlayer(Messages.messageToKickedPlayers);
 					}
 				});
 
@@ -52,7 +53,7 @@ public class KickAllCommand extends SubCommand {
 					Bukkit.broadcastMessage(Messages.kickAllCommandMessage);
 				}
 
-			}, ConfigHandler.kickAllCommandDelay * 20);
+			}, ConfigHandler.kickAllCommandDelay);
 
 		}
 	}

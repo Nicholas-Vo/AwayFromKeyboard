@@ -13,10 +13,12 @@ public class ConfigHandler {
     public static long timeBeforeMarkedAFK;
     public static long timeBeforeAutoKick;
     public static long kickAllCommandDelay;
+    public static long afkCommandBufferTime;
 
     public static boolean autoKickEnabled;
-    public static boolean shouldDisplayTabListTag;
     public static boolean ShouldWarnBeforeKick;
+    public static boolean shouldDisplayTabListTag;
+    public static boolean setPlayerAfkViaChatMessage;
 
     public static boolean announceWhenKickingPlayers;
     public static boolean announcePlayerNowAfk;
@@ -25,6 +27,7 @@ public class ConfigHandler {
 
     private static Map<String, String> messageMap = new HashMap<>();
     private static List<String> ignoredCommands = new ArrayList<>();
+    private static List<String> idleTriggerMessages = new ArrayList<>();
     private static AwayFromKeyboard plugin;
     private static FileConfiguration theConfig;
 
@@ -37,17 +40,19 @@ public class ConfigHandler {
         addDefaultMessage("noLongerAfk", "%playername% is no longer AFK.");
         addDefaultMessage("announcementToServer", "&c[Notice] &rAll AFK players have been kicked.");
         addDefaultMessage("messageToKickedPlayers", "All AFK players have been kicked.");
-        addDefaultMessage("tabListTag", "&8AFK"); // TODO add tablist functionality
+        addDefaultMessage("tabListTag", "&8AFK");
         addDefaultMessage("noPermission", "&cYou do not have permission to do that.");
         addDefaultMessage("noPlayersAreAfk", "There are no AFK players at the moment.");
         addDefaultMessage("youHaveBeenAutoKicked", "You were idle for too long and have been kicked.");
         addDefaultMessage("autoKickAnnounce", "&c[Notice] &r%playername% was idle for too long and has been kicked.");
         addDefaultMessage("thesePlayersAreAfk", "The following players are currently AFK:");
         addDefaultMessage("youAreAboutToBeKicked", "&c[Notice] &rYou are about to be kicked for idling for too long.");
+        addDefaultMessage("kickAllPlayersWarning", "&c[Notice] &rAll AFK players will be kicked from the server in <seconds> seconds.");
 
         theConfig.addDefault("timeBeforeMarkedAFK", 10);
         theConfig.addDefault("timeBeforeAutoKick", 60);
-        theConfig.addDefault("kickAllCommandDelay", 5);
+        theConfig.addDefault("kickAllCommandDelay", 15);
+        theConfig.addDefault("afkCommandBufferTime", 10);
 
         theConfig.addDefault("shouldDisplayTabListTag", true);
         theConfig.addDefault("autoKickEnabled", false);
@@ -57,10 +62,10 @@ public class ConfigHandler {
         theConfig.addDefault("announcePlayerNowAfk", true);
         theConfig.addDefault("announcePlayerNoLongerAfk", true);
         theConfig.addDefault("announceAutoKick", true);
+        theConfig.addDefault("setPlayerAfkViaChatMessage", true);
 
-        theConfig.addDefault("ignoredCommands", new ArrayList<>(Arrays.asList("/afk", "/vanish")));
-
-        // TODO fix bug where comments don't show up within config
+        theConfig.addDefault("ignoredCommands", new ArrayList<>(Arrays.asList("/afk", "/example")));
+        theConfig.addDefault("idleTriggerMessages", new ArrayList<>(Arrays.asList("afk", "brb")));
 
         plugin.saveDefaultConfig();
 
@@ -68,8 +73,10 @@ public class ConfigHandler {
     }
 
     public static void rebuildSettings() {
-        timeBeforeMarkedAFK = (long) theConfig.getInt("afkTime") * 1000 * 60;
-        timeBeforeAutoKick = (long) theConfig.getInt("timeBeforeAutoKick") * 1000 * 60;
+        timeBeforeMarkedAFK = theConfig.getLong("afkTime") * 1000 * 60;
+        timeBeforeAutoKick = theConfig.getLong("timeBeforeAutoKick") * 1000 * 60;
+        afkCommandBufferTime = theConfig.getLong("afkCommandBufferTime") * 20;
+        kickAllCommandDelay = theConfig.getLong("kickAllCommandDelay") * 20;
 
         announceWhenKickingPlayers = theConfig.getBoolean("announceWhenKickingPlayers");
         announcePlayerNowAfk = theConfig.getBoolean("announcePlayerNowAfk");
@@ -77,8 +84,11 @@ public class ConfigHandler {
         shouldDisplayTabListTag = theConfig.getBoolean("shouldDisplayTabListTag");
         autoKickEnabled = theConfig.getBoolean("autoKickEnabled");
         ShouldWarnBeforeKick = theConfig.getBoolean("shouldWarnPlayersBeforeAutoKick");
+        setPlayerAfkViaChatMessage = theConfig.getBoolean("setPlayerAfkViaChatMessage");
+        announceAutoKick = theConfig.getBoolean("announceAutoKick");
 
         ignoredCommands = theConfig.getStringList("ignoredCommands");
+        idleTriggerMessages = theConfig.getStringList("chatMessagesWhichTriggerAfk");
     }
 
     public static void save() {
@@ -113,6 +123,8 @@ public class ConfigHandler {
     }
 
     public static List<String> getIgnoredCommands() { return ignoredCommands; }
+
+    public static List<String> getIdleTriggerMessages() { return idleTriggerMessages; }
 
     private void addDefaultMessage(String path, String message) {
         theConfig.addDefault("messages." + path, "'" + message + "'");

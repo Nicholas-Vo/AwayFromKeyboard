@@ -5,6 +5,7 @@ import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,15 +14,19 @@ import java.util.concurrent.TimeUnit;
 public class IdlePlayer {
     private final Player thePlayer;
     private boolean isIdle;
-    private boolean coolingdown;
+    private boolean notifsBlocked;
     private long timeWentIdle; // This is the time the player went idle
     private int runnableTaskID; // This is the taskID to allow for cancelling of the BukkitRunnable
     private String savedTabList;
-    private Set<Integer> tasks = new HashSet<>();
+    private Set<Integer> tasks;
+
+    private BukkitScheduler scheduler;
 
     public IdlePlayer(Player thePlayer, long timeWentIdle) {
         this.thePlayer = thePlayer;
         this.timeWentIdle = timeWentIdle;
+        tasks = new HashSet<>();
+        scheduler = Bukkit.getScheduler();
     }
 
     public long getIdleTime() {
@@ -41,7 +46,11 @@ public class IdlePlayer {
             thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, Messages.tabListTag));
         }
 
-        if (ConfigHandler.announcePlayerNowAfk) { AwayFromKeyboard.broadcast(thePlayer, Messages.isNowAfk); }
+        if (ConfigHandler.announcePlayerNowAfk) {
+            if (!notifsBlocked) AwayFromKeyboard.broadcast(thePlayer, Messages.isNowAfk);
+            notifsBlocked = true;
+            scheduler.runTaskLater(AwayFromKeyboard.thePlugin, () -> notifsBlocked = false, ConfigHandler.afkCommandBufferTime);
+        }
     }
 
     public void setActive() { // this runs within OnPlayerMove!
@@ -50,55 +59,42 @@ public class IdlePlayer {
         if (!isIdle) return;
         isIdle = false;
 
-        clearNotificationTasks();
-
         if (ConfigHandler.shouldDisplayTabListTag) thePlayer.setPlayerListName(savedTabList);
 
         if (ConfigHandler.announcePlayerNoLongerAfk) {
-           int taskId = Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () -> {
+            tasks.add(scheduler.runTaskLater(AwayFromKeyboard.thePlugin, () -> {
 
-               if (thePlayer.isOnline()) { AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk); }
+                if (thePlayer.isOnline()) { AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk); }
 
-            }, 2 * 20).getTaskId(); // todo remove delay?
-            tasks.add(taskId); // add to list for later cancellation
+            }, 2 * 20).getTaskId()); // todo remove delay?)
+
+            clearNotificationTasks();
         }
     }
 
+    public void forget() {
+        scheduler.cancelTask(runnableTaskID);
+        clearNotificationTasks();
+        AwayFromKeyboard.removeFromIdlePlayerMap(thePlayer.getUniqueId());
+    }
+
     public void clearNotificationTasks() {
-        tasks.forEach(id -> Bukkit.getScheduler().cancelTask(id));
+        tasks.forEach(id -> scheduler.cancelTask(id));
     }
-
-    public void addToCooldown() {
-        if (coolingdown) return;
-        coolingdown = true;
-        Bukkit.getScheduler().runTaskLater(AwayFromKeyboard.thePlugin, () -> coolingdown = false, 6 * 20);
-    }
-
-    public boolean inCooldown() { return coolingdown; }
 
     public boolean isKickExempt() { return thePlayer.hasPermission("afk.kickexempt"); }
 
-    public void forget() {
-        Bukkit.getScheduler().cancelTask(runnableTaskID);
-        clearNotificationTasks();
-        AwayFromKeyboard.removeFromIdleMap(thePlayer.getUniqueId());
-    }
+    public void addToTaskList(int taskId) { tasks.add(taskId); }
 
-    public void setRunnableTaskID(int runnableTaskID) {
+    public void setPrimaryRunnableTaskID(int runnableTaskID) {
         this.runnableTaskID = runnableTaskID;
     }
-
-    public boolean isOnline() { return thePlayer.isOnline(); }
 
     public String getName() {
         return thePlayer.getName();
     }
 
-    public boolean hasPermission(String permission) { return thePlayer.hasPermission(permission); }
-
     public void kickPlayer(String theReason) { thePlayer.kickPlayer(theReason); }
-
-    public Player getPlayer() { return thePlayer; }
 
     public String timeIdleToString() {
         long seconds = (System.currentTimeMillis() - timeWentIdle) / 1000;

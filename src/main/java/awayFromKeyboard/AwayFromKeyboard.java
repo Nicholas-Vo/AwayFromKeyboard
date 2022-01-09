@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
     public static final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
-    public static Map<UUID, IdlePlayer> idleMap = new HashMap<>();
+    public static Map<UUID, IdlePlayer> idlePlayerMap = new HashMap<>();
     public static AwayFromKeyboard thePlugin;
 
     public void onEnable() {
@@ -30,10 +30,10 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         new ConfigHandler();
 
         commands.add(new ListCommand(this));
-        commands.add(new SetTimeCommand(this));
         commands.add(new ReloadCommand(this));
         commands.add(new KickAllCommand(this));
         commands.add(new HelpCommand(this));
+        commands.add(new InfoCommand(this));
 
         getLogger().info("Successfully enabled AwayFromKeyboard v" + VERSION + ".");
     }
@@ -60,20 +60,8 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 sendMessage(player, Messages.markedYourselfAfk);
             }
 
-            IdlePlayer thePlayer = getIdlePlayer(player);
 
-            if (thePlayer.isIdle()) {
-                player.sendMessage(Chat.red + "You are already set as idle.");
-                return true;
-            }
-
-            if (thePlayer.inCooldown()) {
-                player.sendMessage(Chat.red + "You are doing that too much. Try again in a little while.");
-                return true;
-            }
-
-            thePlayer.addToCooldown();
-            thePlayer.setIdle();
+            getIdlePlayer(player).setIdle();
             return false;
         }
 
@@ -93,20 +81,16 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     }
 
     public IdlePlayer getIdlePlayer(Player player) {
-        idleMap.computeIfAbsent(player.getUniqueId(), x -> new IdlePlayer(player, System.currentTimeMillis()));
-        return idleMap.get(player.getUniqueId());
+        idlePlayerMap.computeIfAbsent(player.getUniqueId(), x -> new IdlePlayer(player, System.currentTimeMillis()));
+        return idlePlayerMap.get(player.getUniqueId());
     }
 
     public Set<IdlePlayer> getIdlePlayers() {
-        return idleMap.values().stream().filter(p -> p.isIdle()).collect(Collectors.toSet());
+        return idlePlayerMap.values().stream().filter(p -> p.isIdle()).collect(Collectors.toSet());
     }
 
-    public static void removeFromIdleMap(UUID uuid) {
-        idleMap.remove(uuid);
-    }
-
-    public static void sendErrorMessage(CommandSender sender, String error) {
-        sendMessage(sender, Chat.red + "Error: " + Chat.reset + error);
+    public static void removeFromIdlePlayerMap(UUID uuid) {
+        idlePlayerMap.remove(uuid);
     }
 
     public static void sendMessage(CommandSender sender, String message) {

@@ -1,10 +1,11 @@
 package awayFromKeyboard.utils;
 
+import awayFromKeyboard.AwayFromKeyboard;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-public class Chat  {
+public class Chat {
     public static String aqua = ChatColor.AQUA + "";
     public static String black = ChatColor.BLACK + "";
     public static String blue = ChatColor.BLUE + "";
@@ -26,6 +27,9 @@ public class Chat  {
     public static String pink = ChatColor.LIGHT_PURPLE + "";
     public static String reset = ChatColor.RESET + "";
     public static String strike = ChatColor.STRIKETHROUGH + "";
+    public static String alert = ChatColor.DARK_GRAY + "[!]" + ChatColor.RESET;
+    public static String arrow = Chat.gray +"> "+Chat.darkGray;
+    public static String title = Chat.green + "AwayFromKeyboard " + Chat.gray + "v" + AwayFromKeyboard.VERSION;
 
     public static String formatUsername(CommandSender sender, String aString) {
         String name = sender instanceof ConsoleCommandSender ? "The console" : sender.getName();

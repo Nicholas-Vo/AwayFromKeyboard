@@ -44,15 +44,13 @@ public class Messages {
     }
 
     public static void displayCommandMenu(CommandSender sender) {
-        String arrow = Chat.gray + "> " + Chat.darkGray;
-        sender.sendMessage(Chat.green + "AwayFromKeyboard " + Chat.gray + "v" + AwayFromKeyboard.VERSION);
+        sender.sendMessage(Chat.title);
 
-        if (sender.hasPermission("afk.goafk"))
-            sender.sendMessage(arrow + "/afk" + Chat.reset + " - " + "Set yourself AFK");
+        if (sender.hasPermission("afk.goafk")) sender.sendMessage(Chat.arrow + "/afk" + Chat.reset + " - " + "Set yourself AFK");
 
         AwayFromKeyboard.commands.forEach(command -> {
             if (sender.hasPermission(command.permission())) {
-                sender.sendMessage(arrow + "/afk " + Chat.gray + command.getName()
+                sender.sendMessage(Chat.arrow + "/afk " + Chat.gray + command.getName()
                         + command.usage() + Chat.reset + " - " + command.description());
             }
         });
