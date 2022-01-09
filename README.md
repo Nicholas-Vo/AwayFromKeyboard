@@ -13,10 +13,15 @@ afkTime: 5
 # The delay in seconds before the /afk kickall command kicks all players. Set to 0 to disable this.
 # If set above 0, the "kickAllPlayersWarning" message will display before players are kicked
 kickAllCommandDelay: 2
+# The time in seconds before a new "player is now AFK" message will show up. Set this
+# higher to prevent this message from filling the chat.
+afkCommandBufferTime: 10
 # Should players be automatically kicked after a set period of time?
 autoKickEnabled: false
-# Should we warn the player before they're automatically kicked?
+# Should we warn the player 1 minute before they're automatically kicked?
 shouldWarnPlayersBeforeAutoKick: true
+# Should we announce to the server when a player has been auto-kicked?
+announceAutoKick: true
 # Time in minutes before a player is automatically kicked
 timeBeforeAutoKick: 60
 # Should the tablist be modified to display AFK players? Set this to false
@@ -28,10 +33,17 @@ announceWhenKickingPlayers: true
 announcePlayerNowAfk: true
 # Should the plugin broadcast a message when a player is no longer idle?
 announcePlayerNoLongerAfk: true
+# Should a player be set idle if they say one of the below messages in chat?
+setPlayerAfkViaChatMessage: true
+# The messages that will set a player idle (case insensitive). Any message that STARTS WITH
+# these messages will set a player idle!
+chatMessagesWhichTriggerAfk:
+  - 'afk'
+  - 'brb'
 # Commands that will not remove AFK status from a player. /afk commands do not by default.
 ignoredCommands:
+    - '/afk'
     - '/example'
-    - '/example2'
 messages:
   kickAllCommandMessage: '&c[Notice] &rAll AFK players have been kicked.'
   kickAllPlayersWarning: '&c[Notice] &rAll AFK players will be kicked from the server in <minutes> minutes.'
