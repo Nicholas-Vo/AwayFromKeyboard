@@ -66,6 +66,7 @@ messages:
   
   # Permissions
   
+  ```
   permissions:
   afk.list:
     description: Use the /afk list subcommand
@@ -91,4 +92,5 @@ messages:
   afk.kickexempt:
     description: Exempt from automatic kicks
     default: op
+    ```
 
