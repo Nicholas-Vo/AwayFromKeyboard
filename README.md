@@ -92,5 +92,5 @@ messages:
   afk.kickexempt:
     description: Exempt from automatic kicks
     default: op
-    ```
+  
 
