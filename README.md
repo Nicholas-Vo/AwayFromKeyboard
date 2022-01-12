@@ -63,4 +63,32 @@ messages:
   thesePlayersAreAfk: 'The following players are currently AFK:'
   youAreAboutToBeKicked: '&c[Notice] &rYou are about to be kicked for idling for too long.'
   ```
+  
+  # Permissions
+  
+  permissions:
+  afk.list:
+    description: Use the /afk list subcommand
+    default: true
+  afk.goafk:
+    description: Use the /afk command
+    default: true
+  afk.changetime:
+    description: Use the settime command
+    default: op
+  afk.reload:
+    description: Use the /afk reload command
+    default: op
+  afk.kickall:
+    description: Kick all AFK players
+    default: op
+  afk.menu:
+    description: View the plugin menu
+    default: true
+  afk.seenotifications:
+    description: View plugin notifications
+    default: true
+  afk.kickexempt:
+    description: Exempt from automatic kicks
+    default: op
 
