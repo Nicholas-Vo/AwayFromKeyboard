@@ -2,6 +2,10 @@
 
 Minecraft Bukkit plugin to detect when players have gone idle. Allows admins to kick all currenly idle players or configure the plugin to do so automatically after a player has been idle for X amount of time.
 
+# Obtaining the plugin
+
+You can download the plugin here on GitHub, or from Spigot: https://www.spigotmc.org/resources/awayfromkeyboard.99069/
+
 # Command menu
 
 ![theAfkMenu](https://user-images.githubusercontent.com/60233722/148627881-e7a3ca7a-c6c6-4cbf-85e0-a421d48192e2.PNG)
