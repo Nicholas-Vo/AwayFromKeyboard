@@ -7,19 +7,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.time.temporal.ValueRange;
-import java.util.concurrent.TimeUnit;
 
 public class Listeners implements Listener {
     private AwayFromKeyboard afk;
-    private BukkitScheduler scheduler;
+    private final ConfigHandler config;
 
     public Listeners(AwayFromKeyboard plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        afk = plugin;
-        scheduler = Bukkit.getScheduler();
+        config = plugin.getConfigHandler();
     }
 
     @EventHandler
@@ -28,10 +25,10 @@ public class Listeners implements Listener {
         player.setActive();
 
         // When the player joins, run a timer every second to check if they're idle
-        player.setPrimaryRunnableTaskID(scheduler.runTaskTimer(afk, () -> {
+        player.setPrimaryRunnableTaskID(Bukkit.getScheduler().runTaskTimer(afk, () -> {
             long idleTime = player.getIdleTime();
 
-            if (idleTime > ConfigHandler.timeBeforeMarkedAFK) {
+            if (idleTime > config.timeBeforeMarkedAFK) {
                 player.setIdle();
                 return;
             }
@@ -40,21 +37,21 @@ public class Listeners implements Listener {
                 return;
             }
 
-            long time = ConfigHandler.timeBeforeAutoKick - 1000 * 60;
+            long time = config.timeBeforeAutoKick - 1000 * 60;
 
-            if (ConfigHandler.ShouldWarnBeforeKick && ValueRange.of(time, time + 1000).isValidValue(idleTime)) {
-                afk.sendMessage(e.getPlayer(), Messages.youAreAboutToBeKicked);
+            if (config.ShouldWarnBeforeKick && ValueRange.of(time, time + 1000).isValidValue(idleTime)) {
+                afk.sendMessage(e.getPlayer(), Messages.ABOUT_TO_BE_KICKED_WARNING);
             }
 
-            if (idleTime < ConfigHandler.timeBeforeAutoKick) {
+            if (idleTime < config.timeBeforeAutoKick) {
                 return;
             }
 
-            if (ConfigHandler.autoKickEnabled) {
-                player.kickPlayer(Messages.youHaveBeenAutoKicked);
+            if (config.autoKickEnabled) {
+                player.kickPlayer(Messages.AUTO_KICK_MESSAGE);
 
-                if (ConfigHandler.announceAutoKick) {
-                    afk.broadcast(e.getPlayer(), Messages.autoKickAnnounce);
+                if (config.announceAutoKick) {
+                    afk.broadcast(e.getPlayer(), Messages.AUTO_KICK_ANNOUNCE);
                 }
             }
 
@@ -67,11 +64,11 @@ public class Listeners implements Listener {
         Player p = e.getPlayer();
         IdlePlayer ip = afk.getIdlePlayer(p);
 
-        ConfigHandler.getIdleTriggerMessages().forEach(msg -> {
+        config.getIdleTriggerMessages().forEach(msg -> {
             if (e.getMessage().toLowerCase().startsWith(msg.toLowerCase())) {
-                ip.addToTaskList(scheduler.runTaskLater(afk, ip::setIdle, 2 * 20).getTaskId());
+                ip.addToTaskList(Bukkit.getScheduler().runTaskLater(afk, ip::setIdle, 2 * 20).getTaskId());
             } else {
-                scheduler.runTaskAsynchronously(afk, () -> ip.setActive());
+                Bukkit.getScheduler().runTaskAsynchronously(afk, ip::setActive);
             }
 
         });
@@ -80,14 +77,14 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
-        if (ConfigHandler.getIgnoredCommands().contains(e.getMessage())) { return; }
+        if (config.getIgnoredCommands().contains(e.getMessage())) { return; }
 
-        scheduler.runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        scheduler.runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
+        Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler

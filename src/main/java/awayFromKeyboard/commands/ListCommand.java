@@ -22,11 +22,11 @@ public class ListCommand extends SubCommand {
 		Set<IdlePlayer> list = afk.getIdlePlayers();
 
         if (list.size() == 0) {
-           afk.sendMessage(sender, Messages.noPlayersAreAfk);
+           afk.sendMessage(sender, Messages.NO_PLAYERS_AFK);
             return;
         }
 
-        afk.sendMessage(sender, Messages.thesePlayersAreAfk);
+        afk.sendMessage(sender, Messages.THESE_PLAYERS_AFK);
 
         list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ":" + p.timeIdleToString()));
     }

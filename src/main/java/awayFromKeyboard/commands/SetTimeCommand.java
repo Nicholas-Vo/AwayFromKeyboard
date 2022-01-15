@@ -12,6 +12,7 @@ import awayFromKeyboard.SubCommand;
 import net.md_5.bungee.api.ChatColor;
 
 public class SetTimeCommand extends SubCommand {
+	private ConfigHandler config = afk.getConfigHandler();
 
 	public SetTimeCommand(AwayFromKeyboard afk) {
 		super(afk, "settime");
@@ -31,12 +32,12 @@ public class SetTimeCommand extends SubCommand {
 			return;
 		}
 
-		if (input == ConfigHandler.timeBeforeMarkedAFK) {
+		if (input == config.timeBeforeMarkedAFK) {
 			sender.sendMessage(Chat.red + "The AFK time is already set to " + input + ".");
 			return;
 		}
 
-		ConfigHandler.setConfigurationSetting("afkTime", String.valueOf(input));
+		config.setConfigurationSetting("afkTime", String.valueOf(input));
 		Bukkit.broadcast(Messages.pluginTag + sender.getName() + " set the AFK time to " + input + " minutes.",
 				"afk.changetime");
 	}

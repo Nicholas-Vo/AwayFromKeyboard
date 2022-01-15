@@ -11,6 +11,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import java.util.Set;
 
 public class KickAllCommand extends SubCommand {
+	private final ConfigHandler config = afk.getConfigHandler();
 
 	public KickAllCommand(AwayFromKeyboard afk) {
 		super(afk, "kickall");
@@ -35,8 +36,8 @@ public class KickAllCommand extends SubCommand {
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
 
-			if (ConfigHandler.kickAllCommandDelay > 0) {
-				String theAlert = Messages.kickAllPlayersWarning.replaceAll("<seconds>", String.valueOf(ConfigHandler.kickAllCommandDelay / 20));
+			if (config.kickAllCommandDelay > 0) {
+				String theAlert = Messages.KICK_ALL_WARNING.replaceAll("<seconds>", String.valueOf(config.kickAllCommandDelay / 20));
 				Bukkit.broadcastMessage(theAlert);
 			}
 
@@ -45,15 +46,15 @@ public class KickAllCommand extends SubCommand {
 
 				theIdle.forEach(player -> {
 					if (player != sender && player.isIdle()) {
-						player.kickPlayer(Messages.messageToKickedPlayers);
+						player.kickPlayer(Messages.MSG_TO_KICKED_PLYRS);
 					}
 				});
 
-				if (ConfigHandler.announceWhenKickingPlayers) {
-					Bukkit.broadcastMessage(Messages.kickAllCommandMessage);
+				if (config.announceWhenKickingPlayers) {
+					Bukkit.broadcastMessage(Messages.KICK_ALL_CMD_MESSAGE);
 				}
 
-			}, ConfigHandler.kickAllCommandDelay);
+			}, config.kickAllCommandDelay);
 
 		}
 	}

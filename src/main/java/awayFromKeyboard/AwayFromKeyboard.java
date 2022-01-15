@@ -20,14 +20,15 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     public static final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
     public static Map<UUID, IdlePlayer> idlePlayerMap = new HashMap<>();
-    public static AwayFromKeyboard thePlugin;
+    private ConfigHandler configHandler;
+    private Messages messages;
 
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-        thePlugin = this;
+        configHandler = new ConfigHandler(this);
+        messages =  new Messages(configHandler);
 
         new Listeners(this);
-        new ConfigHandler();
 
         commands.add(new ListCommand(this));
         commands.add(new ReloadCommand(this));
@@ -51,13 +52,13 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
             }
 
             if (!player.hasPermission("afk.goafk")) {
-                sendMessage(sender, Messages.noPermission);
+                sendMessage(sender, Messages.NO_PERMISSION);
                 return true;
             }
 
             // need to send the player confirmation if there wasn't an announcement message
-            if (!ConfigHandler.announcePlayerNowAfk || !player.hasPermission("afk.seenotifications")) {
-                sendMessage(player, Messages.markedYourselfAfk);
+            if (!configHandler.announcePlayerNowAfk || !player.hasPermission("afk.seenotifications")) {
+                sendMessage(player, Messages.MARKED_YOURSELF_AFK);
             }
 
 
@@ -72,7 +73,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 if (sender.hasPermission(subCommand.permission())) {
                     subCommand.executeCommand(sender, restOfArgs);
                 } else {
-                    sendMessage(sender, Messages.noPermission);
+                    sendMessage(sender, Messages.NO_PERMISSION);
                 }
             }
         });
@@ -86,20 +87,26 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     }
 
     public Set<IdlePlayer> getIdlePlayers() {
-        return idlePlayerMap.values().stream().filter(p -> p.isIdle()).collect(Collectors.toSet());
+        return idlePlayerMap.values().stream().filter(IdlePlayer::isIdle).collect(Collectors.toSet());
     }
 
-    public static void removeFromIdlePlayerMap(UUID uuid) {
+    public void removeFromIdlePlayerMap(UUID uuid) {
         idlePlayerMap.remove(uuid);
     }
 
-    public static void sendMessage(CommandSender sender, String message) {
+    public void sendMessage(CommandSender sender, String message) {
         sender.sendMessage(Chat.formatUsername(sender, message));
     }
 
-    public static void broadcast(Player player, String message) {
+    public void broadcast(Player player, String message) {
         Bukkit.broadcast(Chat.formatUsername(player, message), "afk.seenotifications");
     }
+
+    public Messages getMessageHandler() { return messages; }
+
+    public ConfigHandler getConfigHandler() { return configHandler; }
+
+    public static AwayFromKeyboard getInstance() {return getPlugin(AwayFromKeyboard.class); }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {

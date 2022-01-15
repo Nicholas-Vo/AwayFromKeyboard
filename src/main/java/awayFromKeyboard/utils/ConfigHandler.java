@@ -10,29 +10,29 @@ import java.io.File;
 import java.util.*;
 
 public class ConfigHandler {
-    public static long timeBeforeMarkedAFK;
-    public static long timeBeforeAutoKick;
-    public static long kickAllCommandDelay;
-    public static long afkCommandBufferTime;
+    public long timeBeforeMarkedAFK;
+    public long timeBeforeAutoKick;
+    public long kickAllCommandDelay;
+    public long afkCommandBufferTime;
 
-    public static boolean autoKickEnabled;
-    public static boolean ShouldWarnBeforeKick;
-    public static boolean shouldDisplayTabListTag;
-    public static boolean setPlayerAfkViaChatMessage;
+    public boolean autoKickEnabled;
+    public boolean ShouldWarnBeforeKick;
+    public boolean shouldDisplayTabListTag;
+    public boolean setPlayerAfkViaChatMessage;
 
-    public static boolean announceWhenKickingPlayers;
-    public static boolean announcePlayerNowAfk;
-    public static boolean announcePlayerNoLongerAfk;
-    public static boolean announceAutoKick;
+    public boolean announceWhenKickingPlayers;
+    public boolean announcePlayerNowAfk;
+    public boolean announcePlayerNoLongerAfk;
+    public boolean announceAutoKick;
 
-    private static Map<String, String> messageMap = new HashMap<>();
-    private static List<String> ignoredCommands = new ArrayList<>();
-    private static List<String> idleTriggerMessages = new ArrayList<>();
-    private static AwayFromKeyboard plugin;
-    private static FileConfiguration theConfig;
+    private final Map<String, String> messageMap = new HashMap<>();
+    private List<String> ignoredCommands = new ArrayList<>();
+    private List<String> idleTriggerMessages = new ArrayList<>();
+    private FileConfiguration theConfig;
+    private final AwayFromKeyboard plugin;
 
-    public ConfigHandler() {
-        plugin = AwayFromKeyboard.thePlugin;
+    public ConfigHandler(AwayFromKeyboard plugin) {
+        this.plugin = plugin;
         theConfig = plugin.getConfig();
 
         addDefaultMessage("markedYourselfAfk", "You marked yourself as AFK.");
@@ -68,11 +68,10 @@ public class ConfigHandler {
         theConfig.addDefault("idleTriggerMessages", new ArrayList<>(Arrays.asList("afk", "brb")));
 
         plugin.saveDefaultConfig();
-
         rebuildConfiguration();
     }
 
-    public static void rebuildSettings() {
+    public void rebuildSettings() {
         timeBeforeMarkedAFK = theConfig.getLong("afkTime") * 1000 * 60;
         timeBeforeAutoKick = theConfig.getLong("timeBeforeAutoKick") * 1000 * 60;
         afkCommandBufferTime = theConfig.getLong("afkCommandBufferTime") * 20;
@@ -91,13 +90,13 @@ public class ConfigHandler {
         idleTriggerMessages = theConfig.getStringList("chatMessagesWhichTriggerAfk");
     }
 
-    public static void save() {
+    public void save() {
         plugin.saveConfig();
 
         rebuildConfiguration();
     }
 
-    public static void rebuildConfiguration() {
+    public void rebuildConfiguration() {
         messageMap.clear();
         plugin.saveDefaultConfig();
 
@@ -109,22 +108,22 @@ public class ConfigHandler {
             messageMap.put(key, ChatColor.translateAlternateColorCodes('&', theString));
         });
 
-        Messages.rebuild();
+        plugin.getMessageHandler().rebuild();
         rebuildSettings();
     }
 
-    public static void setConfigurationSetting(String path, String theValue) {
+    public void setConfigurationSetting(String path, String theValue) {
         theConfig.set(path, theValue);
         save();
     }
 
-    public static Map<String, String> getMessageMap() {
+    public Map<String, String> getMessageMap() {
         return messageMap;
     }
 
-    public static List<String> getIgnoredCommands() { return ignoredCommands; }
+    public List<String> getIgnoredCommands() { return ignoredCommands; }
 
-    public static List<String> getIdleTriggerMessages() { return idleTriggerMessages; }
+    public List<String> getIdleTriggerMessages() { return idleTriggerMessages; }
 
     private void addDefaultMessage(String path, String message) {
         theConfig.addDefault("messages." + path, "'" + message + "'");

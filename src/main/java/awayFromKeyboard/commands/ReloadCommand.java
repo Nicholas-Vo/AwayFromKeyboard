@@ -2,10 +2,8 @@ package awayFromKeyboard.commands;
 
 import awayFromKeyboard.AwayFromKeyboard;
 import awayFromKeyboard.SubCommand;
-import awayFromKeyboard.utils.ConfigHandler;
 import awayFromKeyboard.utils.Messages;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 
 import java.io.File;
 
@@ -20,12 +18,12 @@ public class ReloadCommand extends SubCommand {
         boolean foundConfig = new File(afk.getDataFolder(), "config.yml").exists();
 
         afk.reloadConfig();
-        ConfigHandler.rebuildConfiguration();
+        afk.getConfigHandler().rebuildConfiguration();
 
         String theMessage = foundConfig ? " Successfully reloaded the configuration."
                 : " The configuration file was missing, so a new one was generated.";
 
-        sender.sendMessage(Messages.pluginTag + theMessage);
+        sender.sendMessage(Messages.TAB_LIST_TAG + theMessage);
     }
 
     @Override

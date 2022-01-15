@@ -18,15 +18,14 @@ public class IdlePlayer {
     private long timeWentIdle; // This is the time the player went idle
     private int runnableTaskID; // This is the taskID to allow for cancelling of the BukkitRunnable
     private String savedTabList;
-    private Set<Integer> tasks;
+    private final Set<Integer> tasks = new HashSet<>();
 
-    private BukkitScheduler scheduler;
+    private final AwayFromKeyboard afk = AwayFromKeyboard.getInstance();
+    private final ConfigHandler config = afk.getConfigHandler();
 
     public IdlePlayer(Player thePlayer, long timeWentIdle) {
         this.thePlayer = thePlayer;
         this.timeWentIdle = timeWentIdle;
-        tasks = new HashSet<>();
-        scheduler = Bukkit.getScheduler();
     }
 
     public long getIdleTime() {
@@ -41,15 +40,15 @@ public class IdlePlayer {
 
         clearNotificationTasks();
 
-        if (ConfigHandler.shouldDisplayTabListTag) {
+        if (config.shouldDisplayTabListTag) {
             savedTabList = thePlayer.getPlayerListName();
-            thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, Messages.tabListTag));
+            thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, Messages.TAB_LIST_TAG));
         }
 
-        if (ConfigHandler.announcePlayerNowAfk) {
-            if (!notifsBlocked) AwayFromKeyboard.broadcast(thePlayer, Messages.isNowAfk);
+        if (config.announcePlayerNowAfk) {
+            if (!notifsBlocked) afk.broadcast(thePlayer, Messages.IS_NOW_AFK);
             notifsBlocked = true;
-            scheduler.runTaskLater(AwayFromKeyboard.thePlugin, () -> notifsBlocked = false, ConfigHandler.afkCommandBufferTime);
+            Bukkit.getScheduler().runTaskLater(afk, () -> notifsBlocked = false, config.afkCommandBufferTime);
         }
     }
 
@@ -59,12 +58,12 @@ public class IdlePlayer {
         if (!isIdle) return;
         isIdle = false;
 
-        if (ConfigHandler.shouldDisplayTabListTag) thePlayer.setPlayerListName(savedTabList);
+        if (config.shouldDisplayTabListTag) thePlayer.setPlayerListName(savedTabList);
 
-        if (ConfigHandler.announcePlayerNoLongerAfk) {
-            tasks.add(scheduler.runTaskLater(AwayFromKeyboard.thePlugin, () -> {
+        if (config.announcePlayerNoLongerAfk) {
+            tasks.add(Bukkit.getScheduler().runTaskLater(afk, () -> {
 
-                if (thePlayer.isOnline()) { AwayFromKeyboard.broadcast(thePlayer, Messages.noLongerAfk); }
+                if (thePlayer.isOnline()) { afk.broadcast(thePlayer, Messages.NO_LONGER_AFK); }
 
             }, 2 * 20).getTaskId()); // todo remove delay?)
 
@@ -73,13 +72,13 @@ public class IdlePlayer {
     }
 
     public void forget() {
-        scheduler.cancelTask(runnableTaskID);
+        Bukkit.getScheduler().cancelTask(runnableTaskID);
         clearNotificationTasks();
-        AwayFromKeyboard.removeFromIdlePlayerMap(thePlayer.getUniqueId());
+        afk.removeFromIdlePlayerMap(thePlayer.getUniqueId());
     }
 
     public void clearNotificationTasks() {
-        tasks.forEach(id -> scheduler.cancelTask(id));
+        tasks.forEach(id -> Bukkit.getScheduler().cancelTask(id));
     }
 
     public boolean isKickExempt() { return thePlayer.hasPermission("afk.kickexempt"); }
