@@ -61,7 +61,6 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 sendMessage(player, Messages.MARKED_YOURSELF_AFK);
             }
 
-
             getIdlePlayer(player).setIdle();
             return false;
         }
