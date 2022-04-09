@@ -92,5 +92,11 @@ messages:
   afk.kickexempt:
     description: Exempt from automatic kicks
     default: op
-  
+```
+      
+ # License
+ 
+ This plugin is licensed under the MIT License. For more information refer to LICENSE.
+ 
+ 
 
