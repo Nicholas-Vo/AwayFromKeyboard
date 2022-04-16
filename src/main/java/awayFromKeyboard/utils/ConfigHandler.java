@@ -72,8 +72,8 @@ public class ConfigHandler {
         return ChatColor.translateAlternateColorCodes('&', theString);
     }
 
-    public boolean getBool(String path) {
-        return theConfig.getBoolean(path);
+    public boolean getBoolean(String path, boolean def) {
+        return theConfig.getBoolean(path, def);
     }
 
     public List<String> getIgnoredCommands() { return ignoredCommands; }

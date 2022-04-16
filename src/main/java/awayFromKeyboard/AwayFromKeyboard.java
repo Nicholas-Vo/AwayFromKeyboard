@@ -5,6 +5,7 @@ import awayFromKeyboard.commands.ListCommand;
 import awayFromKeyboard.commands.ReloadCommand;
 import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
+import awayFromKeyboard.utils.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,8 +15,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import org.bstats.bukkit.Metrics;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
     public static final List<SubCommand> commands = new ArrayList<>();
@@ -31,6 +40,14 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         commands.add(new ListCommand(this));
         commands.add(new ReloadCommand(this));
         commands.add(new KickAllCommand(this));
+
+        if (config.getBoolean("update-check", true)) {
+            new Updater(getLogger(), getDescription().getVersion());
+        }
+
+        if (config.getBoolean("metrics", true)) {
+            new Metrics(this, 14892);
+        }
     }
 
     public void onDisable() {
