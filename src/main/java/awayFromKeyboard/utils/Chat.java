@@ -29,7 +29,8 @@ public class Chat {
     public static String strike = ChatColor.STRIKETHROUGH + "";
     public static String alert = ChatColor.DARK_GRAY + "[!]" + ChatColor.RESET;
     public static String arrow = Chat.gray +"> "+Chat.darkGray;
-    public static String title = Chat.green + "AwayFromKeyboard " + Chat.gray + "v" + AwayFromKeyboard.VERSION;
+    public static String title = Chat.green + "AwayFromKeyboard " + Chat.gray
+            + "v" + AwayFromKeyboard.getPlugin(AwayFromKeyboard.class).getDescription().getVersion();
 
     public static String formatUsername(CommandSender sender, String aString) {
         String name = sender instanceof ConsoleCommandSender ? "The console" : sender.getName();

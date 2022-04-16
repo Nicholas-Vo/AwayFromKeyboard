@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
-    public static final String VERSION = "2.0";
     public static final List<SubCommand> commands = new ArrayList<>();
     public static Map<UUID, IdlePlayer> idlePlayerMap = new HashMap<>();
     private ConfigHandler configHandler;
@@ -35,13 +34,10 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         commands.add(new KickAllCommand(this));
         commands.add(new HelpCommand(this));
         commands.add(new InfoCommand(this));
-
-        getLogger().info("Successfully enabled AwayFromKeyboard v" + VERSION + ".");
     }
 
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this); // Shut down any existing tasks
-        getLogger().info("Disabled AwayFromKeyboard " + VERSION + ".");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

@@ -35,38 +35,6 @@ public class ConfigHandler {
         this.plugin = plugin;
         theConfig = plugin.getConfig();
 
-        addDefaultMessage("markedYourselfAfk", "You marked yourself as AFK.");
-        addDefaultMessage("isNowAfk", "%playername% is now AFK.");
-        addDefaultMessage("noLongerAfk", "%playername% is no longer AFK.");
-        addDefaultMessage("announcementToServer", "&c[Notice] &rAll AFK players have been kicked.");
-        addDefaultMessage("messageToKickedPlayers", "All AFK players have been kicked.");
-        addDefaultMessage("tabListTag", "&8AFK");
-        addDefaultMessage("noPermission", "&cYou do not have permission to do that.");
-        addDefaultMessage("noPlayersAreAfk", "There are no AFK players at the moment.");
-        addDefaultMessage("youHaveBeenAutoKicked", "You were idle for too long and have been kicked.");
-        addDefaultMessage("autoKickAnnounce", "&c[Notice] &r%playername% was idle for too long and has been kicked.");
-        addDefaultMessage("thesePlayersAreAfk", "The following players are currently AFK:");
-        addDefaultMessage("youAreAboutToBeKicked", "&c[Notice] &rYou are about to be kicked for idling for too long.");
-        addDefaultMessage("kickAllPlayersWarning", "&c[Notice] &rAll AFK players will be kicked from the server in <seconds> seconds.");
-
-        theConfig.addDefault("timeBeforeMarkedAFK", 10);
-        theConfig.addDefault("timeBeforeAutoKick", 60);
-        theConfig.addDefault("kickAllCommandDelay", 15);
-        theConfig.addDefault("afkCommandBufferTime", 10);
-
-        theConfig.addDefault("shouldDisplayTabListTag", true);
-        theConfig.addDefault("autoKickEnabled", false);
-        theConfig.addDefault("shouldWarnPlayersBeforeAutoKick", true);
-
-        theConfig.addDefault("announceWhenKickingPlayers", true);
-        theConfig.addDefault("announcePlayerNowAfk", true);
-        theConfig.addDefault("announcePlayerNoLongerAfk", true);
-        theConfig.addDefault("announceAutoKick", true);
-        theConfig.addDefault("setPlayerAfkViaChatMessage", true);
-
-        theConfig.addDefault("ignoredCommands", new ArrayList<>(Arrays.asList("/afk", "/example")));
-        theConfig.addDefault("idleTriggerMessages", new ArrayList<>(Arrays.asList("afk", "brb")));
-
         plugin.saveDefaultConfig();
         rebuildConfiguration();
     }
@@ -103,6 +71,7 @@ public class ConfigHandler {
         theConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
 
         ConfigurationSection section = theConfig.getConfigurationSection("messages");
+
         section.getKeys(false).forEach(key -> {
             String theString = section.getString(key);
             messageMap.put(key, ChatColor.translateAlternateColorCodes('&', theString));
@@ -124,9 +93,4 @@ public class ConfigHandler {
     public List<String> getIgnoredCommands() { return ignoredCommands; }
 
     public List<String> getIdleTriggerMessages() { return idleTriggerMessages; }
-
-    private void addDefaultMessage(String path, String message) {
-        theConfig.addDefault("messages." + path, "'" + message + "'");
-    }
-
 }

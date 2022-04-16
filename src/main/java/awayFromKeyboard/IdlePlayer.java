@@ -41,24 +41,33 @@ public class IdlePlayer {
         clearNotificationTasks();
 
         if (config.shouldDisplayTabListTag) {
-            savedTabList = thePlayer.getPlayerListName();
+            savedTabList = null;
             thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, Messages.TAB_LIST_TAG));
         }
 
         if (config.announcePlayerNowAfk) {
-            if (!notifsBlocked) afk.broadcast(thePlayer, Messages.IS_NOW_AFK);
+            if (!notifsBlocked) {
+                afk.broadcast(thePlayer, Messages.IS_NOW_AFK);
+            }
+
             notifsBlocked = true;
-            Bukkit.getScheduler().runTaskLater(afk, () -> notifsBlocked = false, config.afkCommandBufferTime);
+            Bukkit.getScheduler().runTaskLater(afk,
+                    () -> notifsBlocked = false, config.afkCommandBufferTime);
         }
     }
 
     public void setActive() { // this runs within OnPlayerMove!
         timeWentIdle = System.currentTimeMillis();
 
-        if (!isIdle) return;
+        if (!isIdle) {
+            return;
+        }
+
         isIdle = false;
 
-        if (config.shouldDisplayTabListTag) thePlayer.setPlayerListName(savedTabList);
+        if (config.shouldDisplayTabListTag) {
+            thePlayer.setPlayerListName(savedTabList);
+        }
 
         if (config.announcePlayerNoLongerAfk) {
             tasks.add(Bukkit.getScheduler().runTaskLater(afk, () -> {

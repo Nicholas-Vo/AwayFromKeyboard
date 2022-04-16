@@ -54,7 +54,6 @@ public class Listeners implements Listener {
                     afk.broadcast(e.getPlayer(), Messages.AUTO_KICK_ANNOUNCE);
                 }
             }
-
         }, 0, 20).getTaskId());
 
     }
@@ -70,14 +69,14 @@ public class Listeners implements Listener {
             } else {
                 Bukkit.getScheduler().runTaskAsynchronously(afk, ip::setActive);
             }
-
         });
-
     }
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
-        if (config.getIgnoredCommands().contains(e.getMessage())) { return; }
+        if (config.getIgnoredCommands().contains(e.getMessage())) {
+            return;
+        }
 
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
