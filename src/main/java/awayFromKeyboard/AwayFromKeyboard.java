@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
     public static final List<SubCommand> commands = new ArrayList<>();
-    public static Map<UUID, IdlePlayer> idlePlayerMap = new HashMap<>();
+    public Map<UUID, IdlePlayer> idlePlayerMap = new HashMap<>();
     private ConfigHandler config;
 
     public void onEnable() {

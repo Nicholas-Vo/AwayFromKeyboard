@@ -21,6 +21,8 @@ public class Listeners implements Listener {
     public Listeners(AwayFromKeyboard plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         config = plugin.config();
+
+        this.afk = plugin;
     }
 
     @EventHandler
@@ -87,6 +89,7 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
+
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 

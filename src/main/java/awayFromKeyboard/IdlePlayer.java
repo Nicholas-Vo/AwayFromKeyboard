@@ -15,7 +15,6 @@ public class IdlePlayer {
     private boolean notifsBlocked;
     private long timeWentIdle; // This is the time the player went idle
     private int runnableTaskID; // This is the taskID to allow for cancelling of the BukkitRunnable
-    private String savedTabList;
     private final Set<Integer> tasks = new HashSet<>();
 
     private final AwayFromKeyboard afk = AwayFromKeyboard.getInstance();
@@ -39,7 +38,6 @@ public class IdlePlayer {
         clearNotificationTasks();
 
         if (config.shouldDisplayTabListTag) {
-            savedTabList = null;
             thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, config.get("tabListTag")));
         }
 
@@ -49,12 +47,11 @@ public class IdlePlayer {
             }
 
             notifsBlocked = true;
-            Bukkit.getScheduler().runTaskLater(afk,
-                    () -> notifsBlocked = false, config.afkCommandBufferTime);
+            Bukkit.getScheduler().runTaskLater(afk, () -> notifsBlocked = false, config.afkCommandBufferTime);
         }
     }
 
-    public void setActive() { // this runs within OnPlayerMove!
+    public void setActive() {
         timeWentIdle = System.currentTimeMillis();
 
         if (!isIdle) {
@@ -64,7 +61,7 @@ public class IdlePlayer {
         isIdle = false;
 
         if (config.shouldDisplayTabListTag) {
-            thePlayer.setPlayerListName(savedTabList);
+            thePlayer.setPlayerListName(null);
         }
 
         if (config.announcePlayerNoLongerAfk) {
