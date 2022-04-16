@@ -4,7 +4,7 @@ Minecraft Bukkit plugin to detect when players have gone idle. Allows admins to 
 
 # Obtaining the plugin
 
-You can download the plugin here on GitHub, or from Spigot: https://www.spigotmc.org/resources/awayfromkeyboard.99069/
+You can download the plugin from Spigot: https://www.spigotmc.org/resources/awayfromkeyboard.99069/
 
 # Command menu
 
