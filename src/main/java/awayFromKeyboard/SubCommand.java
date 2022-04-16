@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
 public abstract class SubCommand {
     protected AwayFromKeyboard afk;
     private String name;
@@ -23,7 +24,7 @@ public abstract class SubCommand {
     }
 
     public abstract void executeCommand(CommandSender sender, String[] args);
-    
+
     public abstract String permission();
 
     public abstract String description();

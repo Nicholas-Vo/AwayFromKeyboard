@@ -2,12 +2,14 @@ package awayFromKeyboard.utils;
 
 import awayFromKeyboard.AwayFromKeyboard;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ConfigHandler {
     public long timeBeforeMarkedAFK;
@@ -25,7 +27,6 @@ public class ConfigHandler {
     public boolean announcePlayerNoLongerAfk;
     public boolean announceAutoKick;
 
-    private final Map<String, String> messageMap = new HashMap<>();
     private List<String> ignoredCommands = new ArrayList<>();
     private List<String> idleTriggerMessages = new ArrayList<>();
     private FileConfiguration theConfig;
@@ -58,36 +59,21 @@ public class ConfigHandler {
         idleTriggerMessages = theConfig.getStringList("chatMessagesWhichTriggerAfk");
     }
 
-    public void save() {
-        plugin.saveConfig();
-
-        rebuildConfiguration();
-    }
-
     public void rebuildConfiguration() {
-        messageMap.clear();
         plugin.saveDefaultConfig();
 
         theConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
 
-        ConfigurationSection section = theConfig.getConfigurationSection("messages");
-
-        section.getKeys(false).forEach(key -> {
-            String theString = section.getString(key);
-            messageMap.put(key, ChatColor.translateAlternateColorCodes('&', theString));
-        });
-
-        plugin.getMessageHandler().rebuild();
         rebuildSettings();
     }
 
-    public void setConfigurationSetting(String path, String theValue) {
-        theConfig.set(path, theValue);
-        save();
+    public String get(String path) {
+        String theString = theConfig.getString("messages." + path);
+        return ChatColor.translateAlternateColorCodes('&', theString);
     }
 
-    public Map<String, String> getMessageMap() {
-        return messageMap;
+    public boolean getBool(String path) {
+        return theConfig.getBoolean(path);
     }
 
     public List<String> getIgnoredCommands() { return ignoredCommands; }

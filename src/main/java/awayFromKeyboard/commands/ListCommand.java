@@ -5,16 +5,17 @@ import awayFromKeyboard.IdlePlayer;
 import awayFromKeyboard.SubCommand;
 import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
-import awayFromKeyboard.utils.Messages;
-import awayFromKeyboard.utils.Utils;
 import org.bukkit.command.CommandSender;
 
 import java.util.Set;
 
 public class ListCommand extends SubCommand {
+    private final ConfigHandler config;
 
     public ListCommand(AwayFromKeyboard afk) {
         super(afk, "list");
+
+        this.config = afk.config();
     }
 
     @Override
@@ -22,11 +23,11 @@ public class ListCommand extends SubCommand {
 		Set<IdlePlayer> list = afk.getIdlePlayers();
 
         if (list.size() == 0) {
-           afk.sendMessage(sender, Messages.NO_PLAYERS_AFK);
+           afk.sendMessage(sender, config.get("noPlayersAreAfk"));
             return;
         }
 
-        afk.sendMessage(sender, Messages.THESE_PLAYERS_AFK);
+        afk.sendMessage(sender, config.get("thesePlayersAreAfk"));
 
         list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ":" + p.timeIdleToString()));
     }

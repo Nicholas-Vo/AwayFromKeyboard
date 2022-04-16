@@ -1,9 +1,10 @@
 package awayFromKeyboard;
 
-import awayFromKeyboard.commands.*;
+import awayFromKeyboard.commands.KickAllCommand;
+import awayFromKeyboard.commands.ListCommand;
+import awayFromKeyboard.commands.ReloadCommand;
 import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
-import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,21 +20,17 @@ import java.util.stream.Collectors;
 public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
     public static final List<SubCommand> commands = new ArrayList<>();
     public static Map<UUID, IdlePlayer> idlePlayerMap = new HashMap<>();
-    private ConfigHandler configHandler;
-    private Messages messages;
+    private ConfigHandler config;
 
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-        configHandler = new ConfigHandler(this);
-        messages =  new Messages(configHandler);
+        config = new ConfigHandler(this);
 
         new Listeners(this);
 
         commands.add(new ListCommand(this));
         commands.add(new ReloadCommand(this));
         commands.add(new KickAllCommand(this));
-        commands.add(new HelpCommand(this));
-        commands.add(new InfoCommand(this));
     }
 
     public void onDisable() {
@@ -43,18 +40,18 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (args.length < 1) {
             if (!(sender instanceof Player player)) {
-                Messages.displayCommandMenu(sender);
+                displayCommandMenu(sender);
                 return true;
             }
 
             if (!player.hasPermission("afk.goafk")) {
-                sendMessage(sender, Messages.NO_PERMISSION);
+                sendMessage(sender, config.get("noPermission"));
                 return true;
             }
 
             // need to send the player confirmation if there wasn't an announcement message
-            if (!configHandler.announcePlayerNowAfk || !player.hasPermission("afk.seenotifications")) {
-                sendMessage(player, Messages.MARKED_YOURSELF_AFK);
+            if (!config.announcePlayerNowAfk || !player.hasPermission("afk.seenotifications")) {
+                sendMessage(player, config.get("markedYourselfAfk"));
             }
 
             getIdlePlayer(player).setIdle();
@@ -68,7 +65,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
                 if (sender.hasPermission(subCommand.permission())) {
                     subCommand.executeCommand(sender, restOfArgs);
                 } else {
-                    sendMessage(sender, Messages.NO_PERMISSION);
+                    sendMessage(sender, config.get("noPermission"));
                 }
             }
         });
@@ -97,11 +94,28 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         Bukkit.broadcast(Chat.formatUsername(player, message), "afk.seenotifications");
     }
 
-    public Messages getMessageHandler() { return messages; }
+    public ConfigHandler config() {
+        return config;
+    }
 
-    public ConfigHandler getConfigHandler() { return configHandler; }
+    public static AwayFromKeyboard getInstance() {
+        return getPlugin(AwayFromKeyboard.class);
+    }
 
-    public static AwayFromKeyboard getInstance() {return getPlugin(AwayFromKeyboard.class); }
+    public void displayCommandMenu(CommandSender sender) {
+        sender.sendMessage(Chat.title);
+
+        if (sender.hasPermission("afk.goafk")) {
+            sender.sendMessage(Chat.arrow + "/afk" + Chat.reset + " - " + "Set yourself AFK");
+        }
+
+        AwayFromKeyboard.commands.forEach(command -> {
+            if (sender.hasPermission(command.permission())) {
+                sender.sendMessage(Chat.arrow + "/afk " + Chat.gray + command.getName()
+                        + command.usage() + Chat.reset + " - " + command.description());
+            }
+        });
+    }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {

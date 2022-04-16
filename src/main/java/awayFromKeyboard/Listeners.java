@@ -1,12 +1,16 @@
 package awayFromKeyboard;
 
 import awayFromKeyboard.utils.ConfigHandler;
-import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.time.temporal.ValueRange;
 
@@ -16,7 +20,7 @@ public class Listeners implements Listener {
 
     public Listeners(AwayFromKeyboard plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        config = plugin.getConfigHandler();
+        config = plugin.config();
     }
 
     @EventHandler
@@ -40,7 +44,7 @@ public class Listeners implements Listener {
             long time = config.timeBeforeAutoKick - 1000 * 60;
 
             if (config.ShouldWarnBeforeKick && ValueRange.of(time, time + 1000).isValidValue(idleTime)) {
-                afk.sendMessage(e.getPlayer(), Messages.ABOUT_TO_BE_KICKED_WARNING);
+                afk.sendMessage(e.getPlayer(), config.get("youAreAboutToBeKicked"));
             }
 
             if (idleTime < config.timeBeforeAutoKick) {
@@ -48,10 +52,10 @@ public class Listeners implements Listener {
             }
 
             if (config.autoKickEnabled) {
-                player.kickPlayer(Messages.AUTO_KICK_MESSAGE);
+                player.kickPlayer(config.get("youHaveBeenAutoKicked"));
 
                 if (config.announceAutoKick) {
-                    afk.broadcast(e.getPlayer(), Messages.AUTO_KICK_ANNOUNCE);
+                    afk.broadcast(e.getPlayer(), config.get(""));
                 }
             }
         }, 0, 20).getTaskId());

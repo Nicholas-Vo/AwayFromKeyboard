@@ -2,10 +2,8 @@ package awayFromKeyboard;
 
 import awayFromKeyboard.utils.Chat;
 import awayFromKeyboard.utils.ConfigHandler;
-import awayFromKeyboard.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +19,7 @@ public class IdlePlayer {
     private final Set<Integer> tasks = new HashSet<>();
 
     private final AwayFromKeyboard afk = AwayFromKeyboard.getInstance();
-    private final ConfigHandler config = afk.getConfigHandler();
+    private final ConfigHandler config = afk.config();
 
     public IdlePlayer(Player thePlayer, long timeWentIdle) {
         this.thePlayer = thePlayer;
@@ -42,12 +40,12 @@ public class IdlePlayer {
 
         if (config.shouldDisplayTabListTag) {
             savedTabList = null;
-            thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, Messages.TAB_LIST_TAG));
+            thePlayer.setPlayerListName(Chat.formatUsername(thePlayer, config.get("tabListTag")));
         }
 
         if (config.announcePlayerNowAfk) {
             if (!notifsBlocked) {
-                afk.broadcast(thePlayer, Messages.IS_NOW_AFK);
+                afk.broadcast(thePlayer, config.get("isNowAfk"));
             }
 
             notifsBlocked = true;
@@ -72,7 +70,7 @@ public class IdlePlayer {
         if (config.announcePlayerNoLongerAfk) {
             tasks.add(Bukkit.getScheduler().runTaskLater(afk, () -> {
 
-                if (thePlayer.isOnline()) { afk.broadcast(thePlayer, Messages.NO_LONGER_AFK); }
+                if (thePlayer.isOnline()) { afk.broadcast(thePlayer, config.get("noLongerAfk")); }
 
             }, 2 * 20).getTaskId()); // todo remove delay?)
 
