@@ -39,7 +39,7 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         }
 
         if (config.getBoolean("metrics", true)) {
-            Bukkit.getScheduler().runTaskAsynchronously(this, () -> new Metrics(this, 14892));
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> new Metrics(this, 14986));
         }
     }
 
