@@ -29,7 +29,9 @@ public class IdlePlayer {
         return System.currentTimeMillis() - timeWentIdle;
     }
 
-    public boolean isIdle() { return isIdle; }
+    public boolean isIdle() {
+        return isIdle;
+    }
 
     public void setIdle() {
         if (isIdle) return;
@@ -53,13 +55,11 @@ public class IdlePlayer {
 
     public void setActive() {
         timeWentIdle = System.currentTimeMillis();
-
         if (!isIdle) {
             return;
         }
 
         isIdle = false;
-
         if (config.shouldDisplayTabListTag) {
             thePlayer.setPlayerListName(null);
         }
@@ -67,7 +67,9 @@ public class IdlePlayer {
         if (config.announcePlayerNoLongerAfk) {
             tasks.add(Bukkit.getScheduler().runTaskLater(afk, () -> {
 
-                if (thePlayer.isOnline()) { afk.broadcast(thePlayer, config.get("noLongerAfk")); }
+                if (thePlayer.isOnline()) {
+                    afk.broadcast(thePlayer, config.get("noLongerAfk"));
+                }
 
             }, 2 * 20).getTaskId()); // todo remove delay?)
 
@@ -85,9 +87,13 @@ public class IdlePlayer {
         tasks.forEach(id -> Bukkit.getScheduler().cancelTask(id));
     }
 
-    public boolean isKickExempt() { return thePlayer.hasPermission("afk.kickexempt"); }
+    public boolean isKickExempt() {
+        return thePlayer.hasPermission("afk.kickexempt");
+    }
 
-    public void addToTaskList(int taskId) { tasks.add(taskId); }
+    public void addToTaskList(int taskId) {
+        tasks.add(taskId);
+    }
 
     public void setPrimaryRunnableTaskID(int runnableTaskID) {
         this.runnableTaskID = runnableTaskID;
@@ -97,7 +103,9 @@ public class IdlePlayer {
         return thePlayer.getName();
     }
 
-    public void kickPlayer(String theReason) { thePlayer.kickPlayer(theReason); }
+    public void kickPlayer(String theReason) {
+        thePlayer.kickPlayer(theReason);
+    }
 
     public String timeIdleToString() {
         long seconds = (System.currentTimeMillis() - timeWentIdle) / 1000;

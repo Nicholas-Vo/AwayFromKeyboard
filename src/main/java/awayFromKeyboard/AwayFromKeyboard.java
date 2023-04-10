@@ -69,7 +69,6 @@ public class AwayFromKeyboard extends JavaPlugin implements Listener, CommandExe
         }
 
         String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
-
         commands.forEach(subCommand -> {
             if (subCommand.getName().equals(args[0])) {
                 if (sender.hasPermission(subCommand.permission())) {

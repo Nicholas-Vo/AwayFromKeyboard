@@ -42,7 +42,9 @@ public class KickAllCommand extends SubCommand {
 			}
 
 			Bukkit.getScheduler().runTaskLater(afk, () -> {
-				if (theIdle.size() == 0) return;
+				if (theIdle.size() == 0) {
+					return;
+				}
 
 				theIdle.forEach(player -> {
 					if (player != sender && player.isIdle()) {

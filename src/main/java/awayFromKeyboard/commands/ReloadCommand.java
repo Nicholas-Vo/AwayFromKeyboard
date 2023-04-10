@@ -25,7 +25,6 @@ public class ReloadCommand extends SubCommand {
 
         String theMessage = foundConfig ? "Successfully reloaded the configuration."
                 : "The configuration file was missing, so a new one was generated.";
-
         sender.sendMessage(theMessage);
     }
 

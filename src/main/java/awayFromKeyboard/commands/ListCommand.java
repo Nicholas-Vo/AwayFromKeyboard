@@ -21,14 +21,12 @@ public class ListCommand extends SubCommand {
     @Override
     public void executeCommand(CommandSender sender, String[] args) {
 		Set<IdlePlayer> list = afk.getIdlePlayers();
-
         if (list.size() == 0) {
            afk.sendMessage(sender, config.get("noPlayersAreAfk"));
             return;
         }
 
         afk.sendMessage(sender, config.get("thesePlayersAreAfk"));
-
         list.forEach(p -> sender.sendMessage("- " + Chat.gray + p.getName() + Chat.reset + ":" + p.timeIdleToString()));
     }
 

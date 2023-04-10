@@ -33,7 +33,6 @@ public class Listeners implements Listener {
         // When the player joins, run a timer every second to check if they're idle
         player.setPrimaryRunnableTaskID(Bukkit.getScheduler().runTaskTimer(afk, () -> {
             long idleTime = player.getIdleTime();
-
             if (idleTime > config.timeBeforeMarkedAFK) {
                 player.setIdle();
                 return;
@@ -83,13 +82,11 @@ public class Listeners implements Listener {
         if (config.getIgnoredCommands().contains(e.getMessage())) {
             return;
         }
-
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-
         Bukkit.getScheduler().runTaskAsynchronously(afk, () -> afk.getIdlePlayer(e.getPlayer()).setActive());
     }
 
